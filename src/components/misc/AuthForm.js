@@ -1,11 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-export const AuthFormHeader = ({ title, desc }) => {
+export const AuthFormHeader = ({ title, desc = null }) => {
   return (
     <div class="text-center mb-4">
       <h4>{title}</h4>
-      <p class="text-muted mb-4">{desc}</p>
+      {desc && <p class="text-muted mb-4">{desc}</p>}
     </div>
   );
 };

@@ -5,7 +5,12 @@ import {
   SubmitButton,
   TextInput,
 } from "../../components";
-import { EmailIcon, PasswordIcon, UserIcon } from "../../resources/icons";
+import {
+  EmailIcon,
+  GoogleIcon,
+  PasswordIcon,
+  UserIcon,
+} from "../../resources/icons";
 
 const SignUp = () => {
   return (
@@ -23,6 +28,11 @@ const SignUp = () => {
             <div class="card">
               <div class="card-body p-4">
                 <div class="p-3">
+                  <button className="btn text-center bg-white w-100">
+                    <GoogleIcon />
+                    <span>Continue with Google</span>
+                  </button>
+                  <span className="text-center w-100">OR</span>
                   <form>
                     <div class="mb-3">
                       <TextInput
