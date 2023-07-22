@@ -4,6 +4,7 @@ import {
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
+  updateProfile,
   verifyPasswordResetCode,
 } from "firebase/auth";
 import { auth, githubProvider, googleProvider } from "./firebase";
@@ -28,4 +29,7 @@ export const verifyResetPasswordCode = (...arg) => {
 };
 export const confirmResetPassword = (...arg) => {
   return confirmPasswordReset(auth, ...arg);
+};
+export const updateProfileInFirebase = (...arg) => {
+  return updateProfile(...arg);
 };

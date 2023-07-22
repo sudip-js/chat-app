@@ -11,7 +11,8 @@ import { login, logout } from "./redux/slices/authSlice";
 const App = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log("here");
       if (user) {
         const { displayName, email, phoneNumber, photoURL, uid } = user;
         dispatch(
@@ -23,17 +24,15 @@ const App = () => {
             firebase_uid: uid,
           })
         );
-        console.log("user logged In", user);
       } else {
         dispatch(logout());
-        console.log("user logout", user);
       }
     });
 
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [dispatch]);
 
   return (
     <>

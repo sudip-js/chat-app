@@ -13,7 +13,10 @@ import {
   PasswordIcon,
   UserIcon,
 } from "../../resources/icons";
-import { signUpWithEmail } from "../../firebase/authFunctions";
+import {
+  signUpWithEmail,
+  updateProfileInFirebase,
+} from "../../firebase/authFunctions";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signUpSchema } from "../../schema";
@@ -46,14 +49,16 @@ const SignUp = () => {
     }
   };
 
-  const handleSignUpWithEmail = async ({ email, password }) => {
+  const handleSignUpWithEmail = async ({ username, email, password }) => {
     setState((prevState) => ({
       ...prevState,
       isLoading: true,
     }));
     try {
-      const response = await signUpWithEmail(email, password);
-      console.log({ response });
+      const userCredential = await signUpWithEmail(email, password);
+      await updateProfileInFirebase(userCredential?.user, {
+        displayName: username,
+      });
     } catch (error) {
       notify({
         message: error?.message,
