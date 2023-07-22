@@ -9,21 +9,21 @@ import { PasswordIcon } from "../../resources/icons";
 
 const ResetPassword = () => {
   return (
-    <div class="account-pages my-5 pt-sm-5">
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-8 col-lg-6 col-xl-5">
+    <div className="account-pages my-5 pt-sm-5">
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-md-8 col-lg-6 col-xl-5">
             <AuthFormHeader
               {...{
                 title: "Reset Your Password",
               }}
             />
 
-            <div class="card">
-              <div class="card-body p-4">
-                <div class="p-3">
+            <div className="card">
+              <div className="card-body p-4">
+                <div className="p-3">
                   <form>
-                    <div class="mb-3">
+                    <div className="mb-3">
                       <TextInput
                         {...{
                           label: "Password",
@@ -34,7 +34,7 @@ const ResetPassword = () => {
                       />
                     </div>
 
-                    <div class="d-grid">
+                    <div className="d-grid">
                       <SubmitButton type="submit">Reset Password</SubmitButton>
                     </div>
                   </form>
@@ -42,7 +42,7 @@ const ResetPassword = () => {
               </div>
             </div>
 
-            <div class="mt-5 text-center">
+            <div className="mt-5 text-center">
               <AuthFormFooter
                 {...{
                   title: "Already have an account?",

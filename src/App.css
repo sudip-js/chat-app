@@ -4,3 +4,19 @@
 .bg-white{
     background: white !important;
 }
+.bg-black{
+    background:black !important;
+}
+
+.text-black{
+    color: #000000 !important;
+}
+
+.text-white{
+    color: #fafafa !important;
+}
+
+.h-1{
+    height:3rem;
+}
+

@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 export const AuthFormHeader = ({ title, desc = null }) => {
   return (
-    <div class="text-center mb-4">
+    <div className="text-center mb-4">
       <h4>{title}</h4>
-      {desc && <p class="text-muted mb-4">{desc}</p>}
+      {desc && <p className="text-muted mb-4">{desc}</p>}
     </div>
   );
 };

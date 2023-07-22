@@ -1,8 +1,11 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Navigate, Outlet } from "react-router-dom";
 
 const ProtectedRoute = () => {
-  return <Outlet />;
+  const user = useSelector(({ auth }) => auth?.user);
+  if (user?.firebase_uid) return <Outlet />;
+  return <Navigate to="/" />;
 };
 
 export default ProtectedRoute;

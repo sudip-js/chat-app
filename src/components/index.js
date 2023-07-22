@@ -1,3 +1,3 @@
 export { TextInput } from "./form";
-export { SubmitButton } from "./button";
+export { SubmitButton, SocialAuthButton } from "./button";
 export { AuthFormHeader, AuthFormFooter } from "./misc";
