@@ -1,13 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   AuthFormFooter,
   AuthFormHeader,
   SubmitButton,
   TextInput,
 } from "../../components";
-import { PasswordIcon } from "../../resources/icons";
+import { sendEmailForResetPassword } from "../../firebase/authFunctions";
+import { notify } from "../../helpers";
+import { Controller, useForm } from "react-hook-form";
+import { forgotPasswordSchema } from "../../schema/validationSchema";
+import { forgotPasswordInitialState } from "../../initialState/formInitialState";
+import { Spinner } from "react-bootstrap";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { EmailIcon } from "../../resources/icons";
 
 const ForgotPassword = () => {
+  const [state, setState] = useState({
+    isLoading: false,
+  });
+  const { isLoading } = state;
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: forgotPasswordInitialState,
+    mode: "all",
+    resolver: yupResolver(forgotPasswordSchema),
+  });
+  const handleSendResetPasswordEmail = async ({ email }) => {
+    setState((prevState) => ({
+      ...prevState,
+      isLoading: true,
+    }));
+    try {
+      await sendEmailForResetPassword(email);
+      notify({
+        message: "Email sent successfully",
+        type: "success",
+      });
+    } catch (error) {
+      notify({
+        message: error?.message,
+        type: "error",
+      });
+    } finally {
+      setState((prevState) => ({
+        ...prevState,
+        isLoading: false,
+      }));
+    }
+  };
   return (
     <div className="account-pages my-5 pt-sm-5">
       <div className="container">
@@ -29,21 +72,28 @@ const ForgotPassword = () => {
                     Type in your email and we'll send you a link to reset your
                     password
                   </div>
-                  <form>
+                  <form onSubmit={handleSubmit(handleSendResetPasswordEmail)}>
                     <div className="mb-3">
-                      <TextInput
-                        {...{
-                          label: "Password",
-                          icon: PasswordIcon,
-                          placeholder: "Enter password",
-                          type: "password",
-                        }}
+                      <Controller
+                        name="email"
+                        control={control}
+                        render={({ field }) => (
+                          <TextInput
+                            {...{
+                              ...field,
+                              label: "Email",
+                              icon: EmailIcon,
+                              placeholder: "Enter email",
+                              error: errors?.email?.message,
+                            }}
+                          />
+                        )}
                       />
                     </div>
 
                     <div className="d-grid">
-                      <SubmitButton type="submit">
-                        Send Reset Email
+                      <SubmitButton disabled={isLoading} type="submit">
+                        {isLoading ? <Spinner size="sm" /> : "Send Reset Email"}
                       </SubmitButton>
                     </div>
                   </form>

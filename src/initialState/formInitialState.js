@@ -7,3 +7,9 @@ export const signInInitialState = {
   email: "",
   password: "",
 };
+export const forgotPasswordInitialState = {
+  email: "",
+};
+export const resetPasswordInitialState = {
+  password: "",
+};

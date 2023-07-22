@@ -1,7 +1,10 @@
 import {
+  confirmPasswordReset,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
+  verifyPasswordResetCode,
 } from "firebase/auth";
 import { auth, githubProvider, googleProvider } from "./firebase";
 
@@ -16,4 +19,13 @@ export const signUpWithEmail = (...arg) => {
 };
 export const signInWithEmail = (...arg) => {
   return signInWithEmailAndPassword(auth, ...arg);
+};
+export const sendEmailForResetPassword = (...arg) => {
+  return sendPasswordResetEmail(auth, ...arg);
+};
+export const verifyResetPasswordCode = (...arg) => {
+  return verifyPasswordResetCode(auth, ...arg);
+};
+export const confirmResetPassword = (...arg) => {
+  return confirmPasswordReset(auth, ...arg);
 };

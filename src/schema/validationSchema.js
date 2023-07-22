@@ -15,3 +15,12 @@ export const signInSchema = yup.object({
     .matches(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, "Must be valid email"),
   password: yup.string().required("Password is required"),
 });
+export const forgotPasswordSchema = yup.object({
+  email: yup
+    .string()
+    .required("Email is required")
+    .matches(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, "Must be valid email"),
+});
+export const resetPasswordSchema = yup.object({
+  password: yup.string().required("Password is required"),
+});
