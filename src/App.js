@@ -5,11 +5,14 @@ import { ToastContainer } from "react-toastify";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase/firebase";
 import "./App.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login, logout } from "./redux/slices/authSlice";
+import { UserPresence } from "./components";
 
 const App = () => {
   const dispatch = useDispatch();
+  const user = useSelector(({ auth }) => auth?.user);
+  console.log({ user });
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       console.log("here");
@@ -38,6 +41,7 @@ const App = () => {
     <>
       <RouterProvider router={router} />
       <ToastContainer />
+      {user?.firebase_uid && <UserPresence userId={user?.firebase_uid} />}
     </>
   );
 };

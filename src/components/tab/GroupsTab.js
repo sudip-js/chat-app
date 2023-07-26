@@ -34,7 +34,7 @@ const GroupsTab = () => {
           <div
             className="modal fade"
             id="addgroup-exampleModal"
-            tabindex="-1"
+            tabIndex="-1"
             role="dialog"
             aria-labelledby="addgroup-exampleModalLabel"
             aria-hidden="true"

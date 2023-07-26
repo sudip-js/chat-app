@@ -34,7 +34,7 @@ const ContactsTab = () => {
           <div
             className="modal fade"
             id="addContact-exampleModal"
-            tabindex="-1"
+            tabIndex="-1"
             role="dialog"
             aria-labelledby="addContact-exampleModalLabel"
             aria-hidden="true"

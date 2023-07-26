@@ -24,6 +24,8 @@ import { signUpInitialState } from "../../initialState/formInitialState";
 import { notify } from "../../helpers";
 import { Spinner } from "react-bootstrap";
 import { handleLoginWithProvider } from "../../helpers/authHelper";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { db } from "../../firebase/firebase";
 
 const SignUp = () => {
   const [state, setState] = useState({
@@ -56,15 +58,29 @@ const SignUp = () => {
     }));
     try {
       const userCredential = await signUpWithEmail(email, password);
-      await updateProfileInFirebase(userCredential?.user, {
+      const { user = {} } = userCredential;
+      if (!Object.keys(user).length > 0) return;
+      const { displayName, phoneNumber, photoURL, uid } = user;
+      await updateProfileInFirebase(user, {
         displayName: username,
       });
+      const payload = {
+        username: displayName ?? username,
+        email: user?.email,
+        phone_number: phoneNumber,
+        photo_url: photoURL,
+        firebase_uid: uid,
+        create_at: serverTimestamp(),
+        follow: false,
+      };
+      const docRef = doc(db, "users", uid);
+      await setDoc(docRef, payload);
     } catch (error) {
+      console.log({ error: error?.message });
       notify({
         message: error?.message,
         type: "error",
       });
-      console.log({ error: error?.message });
     } finally {
       setState((prevState) => ({
         ...prevState,

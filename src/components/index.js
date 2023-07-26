@@ -10,3 +10,6 @@ export {
   ContactsTab,
   SettingsTab,
 } from "./tab";
+
+export { GrowSpinner } from "./spinner";
+export { UserPresence } from "./misc";
