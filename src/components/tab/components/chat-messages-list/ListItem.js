@@ -4,11 +4,11 @@ import { generateChatId } from "../../../../utils";
 import { useSelector } from "react-redux";
 
 const ListItem = ({ username, firebase_uid, ...rest }) => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
   const user = useSelector(({ auth }) => auth?.user);
   const query = new URLSearchParams(location?.search);
-  const isActive = query.get("chat_id").includes(firebase_uid);
+  const isActive = query.get("chat_id")?.includes(firebase_uid);
   const chatID = generateChatId(user?.firebase_uid, firebase_uid);
 
   return (
