@@ -1,35 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import { Timestamp, doc, setDoc, updateDoc } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
 import { db } from "../../../../../../firebase/firebase";
-import { generateChatId } from "../../../../../../utils";
+import { useGetChatID } from "../../../../../../hooks";
+import { ClearIcon } from "../../../../../../resources/icons";
 
-const initialState = {
-  message: "",
-  typingType: "",
-};
-const ChatInput = () => {
-  const location = useLocation();
+const ChatInput = ({ chatInputState, setChatInputState }) => {
+  console.log({ chatInputState });
   const user = useSelector(({ auth }) => auth?.user);
-  const query = new URLSearchParams(location?.search);
-  const senderID = user?.firebase_uid;
-  const receiverID = query
-    .get("chat_id")
-    ?.split("_")
-    ?.filter((id) => id !== senderID)
-    ?.at(0);
-  const chatID = generateChatId(senderID, receiverID);
+  const { senderID, receiverID, chatID } = useGetChatID();
+  const { message, typingType, isEditMessage, isEditMessageID } =
+    chatInputState;
 
-  const [chatInputState, setChatInputState] = useState(initialState);
-  const { message, typingType } = chatInputState;
   const handleState = (newState) => {
     setChatInputState((prevState) => ({
       ...prevState,
       ...newState,
     }));
   };
+
   const handleOnChange = (e) => {
     const value = e.target.value;
     handleState({
@@ -37,72 +27,104 @@ const ChatInput = () => {
       typingType: "typing-text",
     });
   };
-
+  const handleClearEdit = () => {
+    handleState({
+      isEditMessage: false,
+      isEditMessageID: "",
+      message: "",
+    });
+  };
   const handleSendMessage = async () => {
     let tempMessage = message;
     let tempTypingType = typingType;
+    let tempIsEditMessage = isEditMessage;
+    let tempIsEditMessageID = isEditMessageID;
     if (!tempMessage) return;
     handleState({
       message: "",
       typingType: "",
+      isEditMessage: false,
+      isEditMessageID: "",
     });
     try {
       const currentTime = Timestamp.now();
-      const messageID = uuidv4();
+      if (tempIsEditMessage) {
+        const senderUserMsgEditRef = doc(
+          db,
+          `users-chats/${senderID}/chats/${chatID}/messages`,
+          tempIsEditMessageID
+        );
+        const receiverUserMsgEditRef = doc(
+          db,
+          `users-chats/${receiverID}/chats/${chatID}/messages`,
+          tempIsEditMessageID
+        );
 
-      const senderUserRef = doc(db, `users-chats/${senderID}/chats`, chatID);
-      const receiverUserRef = doc(
-        db,
-        `users-chats/${receiverID}/chats`,
-        chatID
-      );
-
-      const senderUserMsgRef = doc(
-        db,
-        `users-chats/${senderID}/chats/${chatID}/messages`,
-        messageID
-      );
-      const receiverUserMsgRef = doc(
-        db,
-        `users-chats/${receiverID}/chats/${chatID}/messages`,
-        messageID
-      );
-
-      await setDoc(senderUserMsgRef, {
-        id: messageID,
-        message: tempMessage,
-        created_at: currentTime,
-        sender_id: senderID,
-        sender_email: user?.email,
-        type: typingType,
-      });
-      await setDoc(receiverUserMsgRef, {
-        id: messageID,
-        message: tempMessage,
-        created_at: currentTime,
-        sender_id: senderID,
-        sender_email: user?.email,
-        type: typingType,
-      });
-      await updateDoc(senderUserRef, {
-        last_info: {
-          time: Timestamp.now(),
-          last_message: tempMessage,
+        await updateDoc(senderUserMsgEditRef, {
+          message: tempMessage,
+          isEdit: true,
+          created_at: currentTime,
+        });
+        await updateDoc(receiverUserMsgEditRef, {
+          message: tempMessage,
+          isEdit: true,
+          created_at: currentTime,
+        });
+      } else {
+        const messageID = uuidv4();
+        const senderUserRef = doc(db, `users-chats/${senderID}/chats`, chatID);
+        const receiverUserRef = doc(
+          db,
+          `users-chats/${receiverID}/chats`,
+          chatID
+        );
+        const senderUserMsgRef = doc(
+          db,
+          `users-chats/${senderID}/chats/${chatID}/messages`,
+          messageID
+        );
+        const receiverUserMsgRef = doc(
+          db,
+          `users-chats/${receiverID}/chats/${chatID}/messages`,
+          messageID
+        );
+        await setDoc(senderUserMsgRef, {
+          id: messageID,
+          message: tempMessage,
+          created_at: currentTime,
+          sender_id: senderID,
+          sender_email: user?.email,
           type: typingType,
-        },
-        should_notify: true,
-        send_by: senderID,
-      });
-      await updateDoc(receiverUserRef, {
-        last_info: {
-          time: Timestamp.now(),
-          last_message: tempMessage,
+          isEdit: false,
+        });
+        await setDoc(receiverUserMsgRef, {
+          id: messageID,
+          message: tempMessage,
+          created_at: currentTime,
+          sender_id: senderID,
+          sender_email: user?.email,
           type: typingType,
-        },
-        should_notify: true,
-        send_by: senderID,
-      });
-      console.log({ senderID, receiverID });
+          isEdit: false,
+        });
+        await updateDoc(senderUserRef, {
+          last_info: {
+            time: Timestamp.now(),
+            last_message: tempMessage,
+            type: typingType,
+          },
+          should_notify: true,
+          send_by: senderID,
+        });
+        await updateDoc(receiverUserRef, {
+          last_info: {
+            time: Timestamp.now(),
+            last_message: tempMessage,
+            type: typingType,
+          },
+          should_notify: true,
+          send_by: senderID,
+        });
+      }
     } catch (error) {
       console.log({ error });
     }
@@ -110,9 +132,26 @@ const ChatInput = () => {
   const handleKeyDown = (e) => e.key === "Enter" && handleSendMessage();
 
   return (
-    <div className="chat-input-section p-3 p-lg-4 border-top mb-0">
+    <div
+      className="chat-input-section p-3 p-lg-4 border-top mb-0"
+      style={{
+        position: "relative",
+      }}
+    >
       <div className="row g-0">
         <div className="col">
+          {isEditMessage && message && (
+            <ClearIcon
+              style={{
+                position: "absolute",
+                top: "40%",
+                left: "0px",
+              }}
+              className="large-font text-red cursor--pointer"
+              onClick={handleClearEdit}
+            />
+          )}
+
           <input
             name="message"
             className="form-control form-control-lg bg-light border-light"

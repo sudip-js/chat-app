@@ -33,5 +33,31 @@
     width: 6rem;
 }
 
+/* Define font size classes */
+
+/* Small font size */
+.small-font {
+    font-size: 12px;
+  }
+  
+  /* Medium font size */
+  .medium-font {
+    font-size: 16px;
+  }
+  
+  /* Large font size */
+  .large-font {
+    font-size: 20px;
+  }
+  
+  /* Extra-large font size */
+  .extra-large-font {
+    font-size: 24px;
+  }
+
+  .cursor--pointer{
+    cursor: pointer;
+  }
+
 
 

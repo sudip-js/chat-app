@@ -1,6 +1,6 @@
 import React from "react";
 
-const Dropdown = () => {
+const Dropdown = ({ actions }) => {
   return (
     <div className="dropdown align-self-start">
       <a
@@ -14,18 +14,16 @@ const Dropdown = () => {
         <i className="ri-more-2-fill"></i>
       </a>
       <div className="dropdown-menu">
-        <a className="dropdown-item" href="#">
-          Copy <i className="ri-file-copy-line float-end text-muted"></i>
-        </a>
-        <a className="dropdown-item" href="#">
-          Save <i className="ri-save-line float-end text-muted"></i>
-        </a>
-        <a className="dropdown-item" href="#">
-          Forward <i className="ri-chat-forward-line float-end text-muted"></i>
-        </a>
-        <a className="dropdown-item" href="#">
-          Delete <i className="ri-delete-bin-line float-end text-muted"></i>
-        </a>
+        {actions &&
+          actions?.length > 0 &&
+          actions.map(({ id, label, icon: Icon, cta }) => {
+            return (
+              <a key={id} onClick={cta} className="dropdown-item">
+                {label}
+                <Icon className="float-end text-muted extra-large-font cursor--pointer" />
+              </a>
+            );
+          })}
       </div>
     </div>
   );
