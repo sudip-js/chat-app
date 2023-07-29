@@ -120,16 +120,8 @@ const ChatTopBar = () => {
                     Video{" "}
                     <i className="ri-vidicon-line float-end text-muted"></i>
                   </a>
-                  <a className="dropdown-item" href="#">
-                    Archive{" "}
-                    <i className="ri-archive-line float-end text-muted"></i>
-                  </a>
-                  <a className="dropdown-item" href="#">
-                    Muted{" "}
-                    <i className="ri-volume-mute-line float-end text-muted"></i>
-                  </a>
-                  <a className="dropdown-item" href="#">
-                    Delete{" "}
+                  <a className="dropdown-item">
+                    Clear Chat
                     <i className="ri-delete-bin-line float-end text-muted"></i>
                   </a>
                 </div>
