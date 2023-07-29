@@ -67,18 +67,19 @@ const ChatConversation = ({ setChatInputState }) => {
         {isLoading ? (
           <GrowSpinner />
         ) : data && data.length ? (
-          data.map((res) => {
+          data.map((res, index) => {
             const isSenderMessage = res?.sender_id === user?.firebase_uid;
 
             return isSenderMessage ? (
               <SenderMessage
+                key={index}
                 {...{
                   ...res,
                   setChatInputState,
                 }}
               />
             ) : (
-              <ReceiverMessage {...res} />
+              <ReceiverMessage key={index} {...res} />
             );
           })
         ) : (

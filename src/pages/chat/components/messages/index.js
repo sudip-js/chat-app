@@ -12,6 +12,8 @@ const initialState = {
   emoji_name: "",
   attachments: [],
   isShowAttachmentsModal: false,
+  audioRecord: [],
+  isShowAudioRecordModal: false,
 };
 const Messages = () => {
   const [chatInputState, setChatInputState] = useState(initialState);

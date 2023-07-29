@@ -6,9 +6,10 @@ import { db } from "../../../../../../../firebase/firebase";
 import { deleteDoc, doc } from "firebase/firestore";
 import swal from "sweetalert";
 import { useGetChatID } from "../../../../../../../hooks";
+import RenderMessage from "../common/RenderMessage";
 
 const ReceiverMessage = (props) => {
-  const { message, created_at, id: messageID, isEdit } = props;
+  const { created_at, id: messageID, is_edit } = props;
   const { chatID, user } = useGetChatID();
 
   const deleteMessage = async (deleteType) => {
@@ -64,8 +65,12 @@ const ReceiverMessage = (props) => {
         <div className="user-chat-content">
           <div className="ctext-wrap">
             <div className="ctext-wrap-content">
-              <p className="mb-0">{message}</p>
-              {isEdit && <p className="mb-0">(edited)</p>}
+              <RenderMessage
+                {...{
+                  data: { ...props },
+                }}
+              />
+              {is_edit && <p className="mb-0">(edited)</p>}
               <p className="chat-time mb-0">
                 <i className="ri-time-line align-middle"></i>{" "}
                 <span className="align-middle">

@@ -2,13 +2,16 @@ import React, { useRef } from "react";
 import { Timestamp, doc, setDoc, updateDoc } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
 import { useSelector } from "react-redux";
-import { db } from "../../../../../../firebase/firebase";
+import { auth, db, storage } from "../../../../../../firebase/firebase";
 import { useGetChatID } from "../../../../../../hooks";
-import { ClearIcon } from "../../../../../../resources/icons";
+import { ClearIcon, MicIcon } from "../../../../../../resources/icons";
 import Modal from "../../../../../../components/misc/Modal";
 import Picker from "emoji-picker-react";
 import { insertAtCursor } from "../../../../../../utils";
 import PreviewFile from "../preview-file";
+import { onAuthStateChanged } from "firebase/auth";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { GrowSpinner } from "../../../../../../components";
 
 const ChatInput = ({ chatInputState, setChatInputState }) => {
   const inputRef = useRef(null);
@@ -23,7 +26,11 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
     isShowEmojiPicker,
     attachments,
     isShowAttachmentsModal,
+    isLoadingAttachments,
+    audioRecord,
+    isShowAudioRecordModal,
   } = chatInputState;
+  console.log({ chatInputState, isLoadingAttachments });
   const handleState = (newState) => {
     setChatInputState((prevState) => ({
       ...prevState,
@@ -64,12 +71,87 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
 
     ref.focus();
   };
+
+  const handleUploadMedia = ({ file, message }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const currentTime = Timestamp.now();
+        const messageID = uuidv4();
+        const senderUserRef = doc(db, `users-chats/${senderID}/chats`, chatID);
+        const receiverUserRef = doc(
+          db,
+          `users-chats/${receiverID}/chats`,
+          chatID
+        );
+        const senderUserMsgRef = doc(
+          db,
+          `users-chats/${senderID}/chats/${chatID}/messages`,
+          messageID
+        );
+        const receiverUserMsgRef = doc(
+          db,
+          `users-chats/${receiverID}/chats/${chatID}/messages`,
+          messageID
+        );
+
+        const storageRef = ref(storage, `media/${chatID}/${messageID}`);
+        const response = await uploadBytes(storageRef, file, {
+          contentType: file?.type ?? "",
+        });
+        const url = await getDownloadURL(
+          ref(storage, response?.metadata?.fullPath)
+        );
+        await setDoc(senderUserMsgRef, {
+          id: messageID,
+          message: url,
+          created_at: currentTime,
+          sender_id: senderID,
+          sender_email: user?.email,
+          type: response?.metadata?.contentType,
+          file_ame: file?.name ?? "",
+          is_edit: false,
+        });
+        await setDoc(receiverUserMsgRef, {
+          id: messageID,
+          message: url,
+          created_at: currentTime,
+          sender_id: senderID,
+          sender_email: user?.email,
+          type: response?.metadata?.contentType,
+          file_ame: file?.name ?? "",
+          is_edit: false,
+        });
+        await updateDoc(senderUserRef, {
+          last_info: {
+            time: Timestamp.now(),
+            last_message: message,
+            type: response?.metadata?.contentType,
+          },
+          should_notify: true,
+          send_by: senderID,
+        });
+        await updateDoc(receiverUserRef, {
+          last_info: {
+            time: Timestamp.now(),
+            last_message: message,
+            type: response?.metadata?.contentType,
+          },
+          should_notify: true,
+          send_by: senderID,
+        });
+        resolve();
+      } catch (error) {
+        reject(new Error(error));
+      }
+    });
+  };
+
   const handleSendMessage = async () => {
+    const currentTime = Timestamp.now();
     let tempMessage = message;
     let tempTypingType = typingType;
     let tempIsEditMessage = isEditMessage;
     let tempIsEditMessageID = isEditMessageID;
-    if (!tempMessage) return;
     handleState({
       message: "",
       typingType: "",
@@ -77,7 +159,29 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
       isEditMessageID: "",
     });
     try {
-      const currentTime = Timestamp.now();
+      if (Array.isArray(attachments) && attachments.length) {
+        handleState({
+          isLoadingAttachments: true,
+        });
+
+        onAuthStateChanged(auth, async (userResponse) => {
+          if (userResponse) {
+            for (let file of attachments) {
+              await handleUploadMedia({ file, message });
+            }
+          }
+          console.log("all files are uploaded successfully.");
+          if (fileInputRef?.current?.value) {
+            fileInputRef.current.value = null;
+          }
+          handleState({
+            isLoadingAttachments: false,
+            attachments: [],
+          });
+        });
+      }
+
+      if (!tempMessage) return;
       if (tempIsEditMessage) {
         const senderUserMsgEditRef = doc(
           db,
@@ -92,12 +196,12 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
 
         await updateDoc(senderUserMsgEditRef, {
           message: tempMessage,
-          isEdit: true,
+          is_edit: true,
           created_at: currentTime,
         });
         await updateDoc(receiverUserMsgEditRef, {
           message: tempMessage,
-          isEdit: true,
+          is_edit: true,
           created_at: currentTime,
         });
       } else {
@@ -124,8 +228,8 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
           created_at: currentTime,
           sender_id: senderID,
           sender_email: user?.email,
-          type: typingType,
-          isEdit: false,
+          type: tempTypingType,
+          is_edit: false,
         });
         await setDoc(receiverUserMsgRef, {
           id: messageID,
@@ -133,14 +237,14 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
           created_at: currentTime,
           sender_id: senderID,
           sender_email: user?.email,
-          type: typingType,
-          isEdit: false,
+          type: tempTypingType,
+          is_edit: false,
         });
         await updateDoc(senderUserRef, {
           last_info: {
             time: Timestamp.now(),
             last_message: tempMessage,
-            type: typingType,
+            type: tempTypingType,
           },
           should_notify: true,
           send_by: senderID,
@@ -149,7 +253,7 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
           last_info: {
             time: Timestamp.now(),
             last_message: tempMessage,
-            type: typingType,
+            type: tempTypingType,
           },
           should_notify: true,
           send_by: senderID,
@@ -181,6 +285,17 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
                 className="large-font text-red cursor--pointer"
                 onClick={handleClearEdit}
               />
+            )}
+            {isLoadingAttachments && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: "3px",
+                  left: "25px",
+                }}
+              >
+                <GrowSpinner />
+              </span>
             )}
 
             <input
@@ -221,6 +336,24 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
                   multiple
                   hidden
                 />
+                <li
+                  className="list-inline-item"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Audio Record"
+                >
+                  <button
+                    type="button"
+                    className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect"
+                    onClick={() =>
+                      handleState({
+                        isShowAudioRecordModal: true,
+                      })
+                    }
+                  >
+                    <MicIcon />
+                  </button>
+                </li>
                 <li
                   className="list-inline-item"
                   data-bs-toggle="tooltip"
@@ -281,6 +414,20 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
             setChatInputState,
           }}
         />
+      </Modal>
+      <Modal
+        {...{
+          show: isShowAudioRecordModal,
+          title: "Record Audio",
+          submitText: "Submit",
+          hide: () => {
+            handleState({
+              isShowAudioRecordModal: false,
+            });
+          },
+        }}
+      >
+        <h1>Record Audio</h1>
       </Modal>
     </>
   );

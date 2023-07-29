@@ -4,14 +4,14 @@ import TestVideo from "../../../../../../resources/videos/test-video.mp4";
 
 const PreviewFile = ({ attachments, setChatInputState }) => {
   return (
-    <div class="container">
-      <div class="row row-cols-2">
+    <div className="container">
+      <div className="row row-cols-2">
         {Array.isArray(attachments) && attachments.length ? (
           attachments.map((file, index) => {
             return (
               <div
                 key={index}
-                class="col"
+                className="col"
                 style={{
                   position: "relative",
                   padding: "10px",

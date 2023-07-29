@@ -6,6 +6,7 @@ import swal from "sweetalert";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../../../../../../firebase/firebase";
 import { useGetChatID } from "../../../../../../../hooks";
+import RenderMessage from "../common/RenderMessage";
 
 const SenderMessage = (props) => {
   const {
@@ -13,7 +14,7 @@ const SenderMessage = (props) => {
     created_at,
     setChatInputState,
     id: messageID,
-    isEdit,
+    is_edit,
   } = props;
   const { senderID, receiverID, chatID } = useGetChatID();
   const deleteMessage = async (deleteType) => {
@@ -85,6 +86,7 @@ const SenderMessage = (props) => {
       cta: () => handleDeleteMessage(),
     },
   ];
+
   return (
     <li className="right">
       <div className="conversation-list">
@@ -95,8 +97,12 @@ const SenderMessage = (props) => {
         <div className="user-chat-content">
           <div className="ctext-wrap">
             <div className="ctext-wrap-content">
-              <p className="mb-0">{message}</p>
-              {isEdit && <p className="mb-0">(edited)</p>}
+              <RenderMessage
+                {...{
+                  data: { ...props },
+                }}
+              />
+              {is_edit && <p className="mb-0">(edited)</p>}
               <p className="chat-time mb-0">
                 <i className="ri-time-line align-middle"></i>{" "}
                 <span className="align-middle">
