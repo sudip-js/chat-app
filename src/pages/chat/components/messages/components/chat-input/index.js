@@ -8,11 +8,12 @@ import { ClearIcon } from "../../../../../../resources/icons";
 import Modal from "../../../../../../components/misc/Modal";
 import Picker from "emoji-picker-react";
 import { insertAtCursor } from "../../../../../../utils";
+import PreviewFile from "../preview-file";
 
 const ChatInput = ({ chatInputState, setChatInputState }) => {
-  console.log({ chatInputState });
-  const user = useSelector(({ auth }) => auth?.user);
   const inputRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const user = useSelector(({ auth }) => auth?.user);
   const { senderID, receiverID, chatID } = useGetChatID();
   const {
     message,
@@ -20,8 +21,9 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
     isEditMessage,
     isEditMessageID,
     isShowEmojiPicker,
+    attachments,
+    isShowAttachmentsModal,
   } = chatInputState;
-  const handleKeyDown = (e) => e.key === "Enter" && handleSendMessage();
   const handleState = (newState) => {
     setChatInputState((prevState) => ({
       ...prevState,
@@ -33,6 +35,14 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
     handleState({
       message: value,
       typingType: "typing-text",
+    });
+  };
+  const handleChangeFile = (e) => {
+    const files = e.target.files;
+    if (!files) return;
+    handleState({
+      isShowAttachmentsModal: true,
+      attachments: [...attachments, ...files],
     });
   };
   const handleClearEdit = () => {
@@ -149,6 +159,9 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
       console.log({ error });
     }
   };
+  const handleKeyDown = (e) => e.key === "Enter" && handleSendMessage();
+
+  console.log({ chatInputState });
 
   return (
     <>
@@ -203,6 +216,13 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
                     <i className="ri-emotion-happy-line"></i>
                   </button>
                 </li>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleChangeFile}
+                  multiple
+                  hidden
+                />
                 <li
                   className="list-inline-item"
                   data-bs-toggle="tooltip"
@@ -212,6 +232,7 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
                   <button
                     type="button"
                     className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect"
+                    onClick={() => fileInputRef?.current?.click()}
                   >
                     <i className="ri-attachment-line"></i>
                   </button>
@@ -243,6 +264,25 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
         }}
       >
         <Picker width="100%" onEmojiClick={onEmojiClick} />
+      </Modal>
+      <Modal
+        {...{
+          show: isShowAttachmentsModal,
+          title: "Selected File",
+          submitText: "Submit",
+          hide: () => {
+            handleState({
+              isShowAttachmentsModal: false,
+            });
+          },
+        }}
+      >
+        <PreviewFile
+          {...{
+            attachments,
+            setChatInputState,
+          }}
+        />
       </Modal>
     </>
   );
