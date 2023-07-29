@@ -1,15 +1,11 @@
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { generateChatId } from "../../../../utils";
-import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useGetChatID } from "../../../../hooks";
 
 const ListItem = ({ username, firebase_uid, ...rest }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const user = useSelector(({ auth }) => auth?.user);
-  const query = new URLSearchParams(location?.search);
-  const isActive = query.get("chat_id")?.includes(firebase_uid);
-  const chatID = generateChatId(user?.firebase_uid, firebase_uid);
+  const { chatID } = useGetChatID();
+  const isActive = chatID?.includes(firebase_uid);
 
   return (
     <li

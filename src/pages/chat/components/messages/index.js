@@ -6,6 +6,10 @@ const initialState = {
   typingType: "",
   isEditMessage: false,
   isEditMessageID: "",
+  isShowEmojiPicker: false,
+  emoji: "",
+  emoji_id: "",
+  emoji_name: "",
 };
 const Messages = () => {
   const [chatInputState, setChatInputState] = useState(initialState);

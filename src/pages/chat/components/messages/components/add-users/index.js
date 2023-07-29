@@ -1,17 +1,15 @@
 import React, { useState } from "react";
 import { GrowSpinner } from "../../../../../../components";
 import { OverlayTrigger, Spinner, Tooltip } from "react-bootstrap";
-import { useSelector } from "react-redux";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../../../../../firebase/firebase";
 import { serverTimestamp } from "firebase/database";
 import { useNavigate } from "react-router-dom";
-import { useFetchData } from "../../../../../../hooks";
-import { generateChatId } from "../../../../../../utils";
+import { useFetchData, useGetChatID } from "../../../../../../hooks";
 
 const AddUser = () => {
   const navigate = useNavigate();
-  const user = useSelector(({ auth }) => auth?.user);
+  const { senderID, receiverID, chatID, user } = useGetChatID();
   const { isLoading, data } = useFetchData({
     collectionRef: "users",
   });
@@ -31,8 +29,6 @@ const AddUser = () => {
       handleState({
         isLoading: participant?.firebase_uid,
       });
-      const senderID = user?.firebase_uid;
-      const receiverID = participant?.firebase_uid;
       const senderUserRef = doc(db, "users-chats", senderID);
       const receiverUserRef = doc(db, "users-chats", receiverID);
       try {
@@ -76,9 +72,7 @@ const AddUser = () => {
     handleState({
       isLoading: participant?.firebase_uid,
     });
-    const senderID = user?.firebase_uid;
-    const receiverID = participant?.firebase_uid;
-    const chatID = generateChatId(senderID, receiverID);
+
     return new Promise(async (resolve, reject) => {
       const senderUserChatsRef = doc(
         db,

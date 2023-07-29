@@ -1,25 +1,33 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Timestamp, doc, setDoc, updateDoc } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
 import { useSelector } from "react-redux";
 import { db } from "../../../../../../firebase/firebase";
 import { useGetChatID } from "../../../../../../hooks";
 import { ClearIcon } from "../../../../../../resources/icons";
+import Modal from "../../../../../../components/misc/Modal";
+import Picker from "emoji-picker-react";
+import { insertAtCursor } from "../../../../../../utils";
 
 const ChatInput = ({ chatInputState, setChatInputState }) => {
   console.log({ chatInputState });
   const user = useSelector(({ auth }) => auth?.user);
+  const inputRef = useRef(null);
   const { senderID, receiverID, chatID } = useGetChatID();
-  const { message, typingType, isEditMessage, isEditMessageID } =
-    chatInputState;
-
+  const {
+    message,
+    typingType,
+    isEditMessage,
+    isEditMessageID,
+    isShowEmojiPicker,
+  } = chatInputState;
+  const handleKeyDown = (e) => e.key === "Enter" && handleSendMessage();
   const handleState = (newState) => {
     setChatInputState((prevState) => ({
       ...prevState,
       ...newState,
     }));
   };
-
   const handleOnChange = (e) => {
     const value = e.target.value;
     handleState({
@@ -33,6 +41,18 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
       isEditMessageID: "",
       message: "",
     });
+  };
+  const onEmojiClick = ({ emoji }) => {
+    if (!emoji) return;
+    const ref = inputRef?.current;
+    if (!ref) return;
+    insertAtCursor({ ref, data: emoji });
+    handleState({
+      message: inputRef?.current?.value,
+      isShowEmojiPicker: false,
+    });
+
+    ref.focus();
   };
   const handleSendMessage = async () => {
     let tempMessage = message;
@@ -129,81 +149,102 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
       console.log({ error });
     }
   };
-  const handleKeyDown = (e) => e.key === "Enter" && handleSendMessage();
 
   return (
-    <div
-      className="chat-input-section p-3 p-lg-4 border-top mb-0"
-      style={{
-        position: "relative",
-      }}
-    >
-      <div className="row g-0">
-        <div className="col">
-          {isEditMessage && message && (
-            <ClearIcon
-              style={{
-                position: "absolute",
-                top: "40%",
-                left: "0px",
-              }}
-              className="large-font text-red cursor--pointer"
-              onClick={handleClearEdit}
-            />
-          )}
+    <>
+      <div
+        className="chat-input-section p-3 p-lg-4 border-top mb-0"
+        style={{
+          position: "relative",
+        }}
+      >
+        <div className="row g-0">
+          <div className="col">
+            {isEditMessage && message && (
+              <ClearIcon
+                style={{
+                  position: "absolute",
+                  top: "40%",
+                  left: "0px",
+                }}
+                className="large-font text-red cursor--pointer"
+                onClick={handleClearEdit}
+              />
+            )}
 
-          <input
-            name="message"
-            className="form-control form-control-lg bg-light border-light"
-            placeholder="Enter Message..."
-            onChange={handleOnChange}
-            onKeyDown={handleKeyDown}
-            value={message}
-          />
-        </div>
-        <div className="col-auto">
-          <div className="chat-input-links ms-md-2 me-md-0">
-            <ul className="list-inline mb-0">
-              <li
-                className="list-inline-item"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Emoji"
-              >
-                <button
-                  type="button"
-                  className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect"
+            <input
+              ref={inputRef}
+              name="message"
+              className="form-control form-control-lg bg-light border-light"
+              placeholder="Enter Message..."
+              onChange={handleOnChange}
+              onKeyDown={handleKeyDown}
+              value={message}
+            />
+          </div>
+          <div className="col-auto">
+            <div className="chat-input-links ms-md-2 me-md-0">
+              <ul className="list-inline mb-0">
+                <li
+                  className="list-inline-item"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Emoji"
                 >
-                  <i className="ri-emotion-happy-line"></i>
-                </button>
-              </li>
-              <li
-                className="list-inline-item"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-                title="Attached File"
-              >
-                <button
-                  type="button"
-                  className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect"
+                  <button
+                    type="button"
+                    className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect"
+                    onClick={() =>
+                      handleState({
+                        isShowEmojiPicker: true,
+                      })
+                    }
+                  >
+                    <i className="ri-emotion-happy-line"></i>
+                  </button>
+                </li>
+                <li
+                  className="list-inline-item"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Attached File"
                 >
-                  <i className="ri-attachment-line"></i>
-                </button>
-              </li>
-              <li className="list-inline-item">
-                <button
-                  type="type"
-                  className="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light"
-                  onClick={handleSendMessage}
-                >
-                  <i className="ri-send-plane-2-fill"></i>
-                </button>
-              </li>
-            </ul>
+                  <button
+                    type="button"
+                    className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect"
+                  >
+                    <i className="ri-attachment-line"></i>
+                  </button>
+                </li>
+                <li className="list-inline-item">
+                  <button
+                    type="type"
+                    className="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light"
+                    onClick={handleSendMessage}
+                  >
+                    <i className="ri-send-plane-2-fill"></i>
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      <Modal
+        {...{
+          show: isShowEmojiPicker,
+          title: "Select Emoji",
+          submitText: "Submit",
+          hide: () => {
+            handleState({
+              isShowEmojiPicker: false,
+            });
+          },
+        }}
+      >
+        <Picker width="100%" onEmojiClick={onEmojiClick} />
+      </Modal>
+    </>
   );
 };
 

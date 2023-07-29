@@ -4,7 +4,6 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import { db } from "../firebase/firebase";
 import { notify } from "../helpers";
-import { generateChatId } from "../utils";
 
 const initialState = {
   isLoading: false,
