@@ -15,7 +15,6 @@ const SenderMessage = (props) => {
     id: messageID,
     isEdit,
   } = props;
-  console.log({ props });
   const { senderID, receiverID, chatID } = useGetChatID();
   const deleteMessage = async (deleteType) => {
     try {
@@ -37,7 +36,7 @@ const SenderMessage = (props) => {
         await deleteDoc(senderUserMessageRef);
       }
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
     }
   };
   const handleDeleteMessage = () => {

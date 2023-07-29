@@ -22,7 +22,7 @@ const ReceiverMessage = (props) => {
         await deleteDoc(loggedInUserMsgRef);
       }
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
     }
   };
   const handleDeleteMessage = () => {

@@ -61,7 +61,6 @@ const ChatConversation = ({ setChatInputState }) => {
 
     return () => unsubscribe();
   }, [chatID]);
-  console.log({ data });
   return (
     <div className="chat-conversation p-3 p-lg-4" data-simplebar="init">
       <ul className="list-unstyled mb-0">

@@ -3,8 +3,6 @@ import { ClearIcon } from "../../../../../../resources/icons";
 import TestVideo from "../../../../../../resources/videos/test-video.mp4";
 
 const PreviewFile = ({ attachments, setChatInputState }) => {
-  console.log({ attachments });
-
   return (
     <div class="container">
       <div class="row row-cols-2">

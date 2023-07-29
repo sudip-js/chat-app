@@ -6,10 +6,11 @@ import { db } from "../../../../../../firebase/firebase";
 import { serverTimestamp } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 import { useFetchData, useGetChatID } from "../../../../../../hooks";
+import { generateChatId } from "../../../../../../utils";
 
 const AddUser = () => {
   const navigate = useNavigate();
-  const { senderID, receiverID, chatID, user } = useGetChatID();
+  const { senderID, user } = useGetChatID();
   const { isLoading, data } = useFetchData({
     collectionRef: "users",
   });
@@ -29,6 +30,7 @@ const AddUser = () => {
       handleState({
         isLoading: participant?.firebase_uid,
       });
+      const receiverID = participant?.firebase_uid;
       const senderUserRef = doc(db, "users-chats", senderID);
       const receiverUserRef = doc(db, "users-chats", receiverID);
       try {
@@ -73,6 +75,9 @@ const AddUser = () => {
       isLoading: participant?.firebase_uid,
     });
 
+    const receiverID = participant?.firebase_uid;
+    const chatID = generateChatId(senderID, receiverID);
+
     return new Promise(async (resolve, reject) => {
       const senderUserChatsRef = doc(
         db,
@@ -88,7 +93,6 @@ const AddUser = () => {
         const senderUserChatsSnap = await getDoc(senderUserChatsRef);
         const receiverUserChatsSnap = await getDoc(receiverUserChatsRef);
         if (senderUserChatsSnap.exists() || receiverUserChatsSnap.exists()) {
-          console.log("here navigate to chat section");
           handleState({
             isLoading: null,
           });
@@ -153,7 +157,7 @@ const AddUser = () => {
       await handleSetUpUser(participant);
       await handleSetUpChat(participant);
     } catch (error) {
-      console.log({ error: error });
+      console.error({ error: error });
     }
   };
   return (

@@ -1,2 +1,2 @@
 export { formateMessageTime } from "./date-time";
-export { insertAtCursor } from "./chat";
+export { insertAtCursor, generateChatId } from "./chat";

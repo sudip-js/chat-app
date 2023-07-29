@@ -7,3 +7,8 @@ export const insertAtCursor = ({ ref, data }) => {
   ref.selectionStart = selectionStart + text.length;
   ref.selectionEnd = ref.selectionStart;
 };
+
+export const generateChatId = (userId1, userId2) => {
+  const sortedUserIds = [userId1, userId2].sort();
+  return sortedUserIds.join("_");
+};

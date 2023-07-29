@@ -12,10 +12,8 @@ import { UserPresence } from "./components";
 const App = () => {
   const dispatch = useDispatch();
   const user = useSelector(({ auth }) => auth?.user);
-  console.log({ user });
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log("here");
       if (user) {
         const { displayName, email, phoneNumber, photoURL, uid } = user;
         dispatch(

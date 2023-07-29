@@ -156,12 +156,10 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
         });
       }
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
     }
   };
   const handleKeyDown = (e) => e.key === "Enter" && handleSendMessage();
-
-  console.log({ chatInputState });
 
   return (
     <>

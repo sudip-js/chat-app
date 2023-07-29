@@ -38,14 +38,12 @@ const SignIn = () => {
 
   const handleSocialAuth = async (provider) => {
     const result = await handleLoginWithProvider(provider);
-    if (result.response) {
-      console.log("Login successful:", result.response);
-    } else {
+    if (!result.response) {
+      console.error({ errors: result?.error });
       notify({
         message: result.error,
         type: "error",
       });
-      console.log("Login failed:", result.error);
     }
   };
 
@@ -56,13 +54,12 @@ const SignIn = () => {
     }));
     try {
       const response = await signInWithEmail(email, password);
-      console.log({ response });
     } catch (error) {
       notify({
         message: error?.message,
         type: "error",
       });
-      console.log({ error: error?.message });
+      console.error({ error: error?.message });
     } finally {
       setState((prevState) => ({
         ...prevState,

@@ -18,7 +18,7 @@ const SidebarMenu = () => {
         }
       });
     } catch (error) {
-      console.log({ error: error?.message });
+      console.error({ error: error?.message });
       notify({
         message: error?.message,
         type: "error",

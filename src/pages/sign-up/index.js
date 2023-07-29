@@ -44,10 +44,12 @@ const SignUp = () => {
 
   const handleSocialAuth = async (provider) => {
     const result = await handleLoginWithProvider(provider);
-    if (result.response) {
-      console.log("Login successful:", result.response);
-    } else {
-      console.log("Login failed:", result.error);
+    if (!result.response) {
+      console.error({ errors: result?.error });
+      notify({
+        message: result.error,
+        type: "error",
+      });
     }
   };
 
@@ -76,7 +78,6 @@ const SignUp = () => {
       const docRef = doc(db, "users", uid);
       await setDoc(docRef, payload);
     } catch (error) {
-      console.log({ error: error?.message });
       notify({
         message: error?.message,
         type: "error",
