@@ -1,9 +1,23 @@
 import React from "react";
-import { Modal as BootstrapModal } from "react-bootstrap";
+import { Modal as BootstrapModal, Spinner } from "react-bootstrap";
 
-const Modal = ({ show, hide, submitText, title, children }) => {
+const Modal = ({
+  show,
+  hide,
+  submitText,
+  title,
+  children,
+  isLoading = null,
+  isDisabled = undefined,
+}) => {
+  console.log({ isDisabled });
   return (
-    <BootstrapModal show={show} onHide={hide}>
+    <BootstrapModal
+      show={show}
+      onHide={hide}
+      backdrop="static"
+      keyboard={false}
+    >
       <div className="modal-header">
         <h5
           className="modal-title font-size-16 text-center w-100"
@@ -28,11 +42,20 @@ const Modal = ({ show, hide, submitText, title, children }) => {
         {children}
       </div>
       <div className="modal-footer">
-        <button type="button" className="btn btn-danger" onClick={hide}>
+        <button
+          type="button"
+          className="btn btn-danger w-25"
+          onClick={() => hide("cancel")}
+        >
           Close
         </button>
-        <button type="button" className="btn btn-primary" onClick={hide}>
-          {submitText}
+        <button
+          type="button"
+          className="btn btn-primary w-25"
+          onClick={() => hide("submit")}
+          disabled={isDisabled || isLoading}
+        >
+          {isLoading ? <Spinner size="sm" /> : submitText}
         </button>
       </div>
     </BootstrapModal>

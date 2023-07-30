@@ -2,6 +2,7 @@ import React from "react";
 
 const RenderMessage = ({ data }) => {
   const { message, type, file_ame = "" } = data;
+
   if (type.includes("image")) {
     return (
       <img
@@ -10,7 +11,7 @@ const RenderMessage = ({ data }) => {
         alt={`${file_ame}(Error)`}
         style={{
           objectFit: "contain",
-          height: "360px",
+          maxHeight: "360px",
           maxWidth: "360px",
         }}
       />
@@ -21,7 +22,7 @@ const RenderMessage = ({ data }) => {
     return (
       <video
         style={{
-          height: "360px",
+          maxHeight: "360px",
           maxWidth: "360px",
         }}
         src={message}
@@ -29,6 +30,20 @@ const RenderMessage = ({ data }) => {
       >
         <h6>Your browser does not support the video tag.</h6>
       </video>
+    );
+  }
+  if (type?.includes("audio")) {
+    return (
+      <audio
+        style={{
+          maxHeight: "360px",
+          maxWidth: "360px",
+        }}
+        src={message}
+        controls
+      >
+        <h6>Your browser does not support the audio tag.</h6>
+      </audio>
     );
   }
   return <p className="mb-0">{message}</p>;

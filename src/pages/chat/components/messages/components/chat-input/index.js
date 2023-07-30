@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Timestamp, doc, setDoc, updateDoc } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
 import { useSelector } from "react-redux";
@@ -12,6 +12,16 @@ import PreviewFile from "../preview-file";
 import { onAuthStateChanged } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { GrowSpinner } from "../../../../../../components";
+import { AudioRecording } from "../recording";
+
+const audioRecordingInitialState = {
+  recordingMinutes: 0,
+  recordingSeconds: 0,
+  initRecording: false,
+  mediaStream: null,
+  mediaRecorder: null,
+  audio: [],
+};
 
 const ChatInput = ({ chatInputState, setChatInputState }) => {
   const inputRef = useRef(null);
@@ -27,8 +37,9 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
     attachments,
     isShowAttachmentsModal,
     isLoadingAttachments,
-    audioRecord,
     isShowAudioRecordModal,
+    isLoadingAudioRecord,
+    audio,
   } = chatInputState;
   console.log({ chatInputState, isLoadingAttachments });
   const handleState = (newState) => {
@@ -180,6 +191,25 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
           });
         });
       }
+      if (Array.isArray(audio) && audio.length) {
+        handleState({
+          isLoadingAudioRecord: true,
+        });
+
+        onAuthStateChanged(auth, async (userResponse) => {
+          if (userResponse) {
+            for (let file of audio) {
+              await handleUploadMedia({ file, message });
+            }
+          }
+          console.log("all files are uploaded successfully.");
+          handleState({
+            isLoadingAudioRecord: false,
+            isShowAudioRecordModal: false,
+            audio: [],
+          });
+        });
+      }
 
       if (!tempMessage) return;
       if (tempIsEditMessage) {
@@ -263,7 +293,26 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
       console.error({ error });
     }
   };
+
+  const handleRecordAudio = (type) => {
+    if (type === "submit") {
+      handleSendMessage();
+    } else {
+      handleState({
+        isShowAudioRecordModal: false,
+        audio: [],
+      });
+    }
+  };
+
   const handleKeyDown = (e) => e.key === "Enter" && handleSendMessage();
+
+  useEffect(() => {
+    if (audio) {
+      // const url = URL?.createObjectURL(audio);
+      console.log({ audio });
+    }
+  }, [audio]);
 
   return (
     <>
@@ -419,15 +468,19 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
         {...{
           show: isShowAudioRecordModal,
           title: "Record Audio",
-          submitText: "Submit",
-          hide: () => {
-            handleState({
-              isShowAudioRecordModal: false,
-            });
-          },
+          submitText: "Upload",
+          hide: handleRecordAudio,
+          isLoading: isLoadingAudioRecord,
+          isDisabled: !Boolean(audio?.length),
         }}
       >
-        <h1>Record Audio</h1>
+        <AudioRecording
+          {...{
+            chatInputState,
+            setChatInputState,
+            audioRecordingInitialState,
+          }}
+        />
       </Modal>
     </>
   );

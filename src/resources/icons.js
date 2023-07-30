@@ -6,5 +6,6 @@ export {
   FaGithub as GithubIcon,
   FaEdit as EditIcon,
   FaMicrophone as MicIcon,
+  FaCheck as CheckIcon,
 } from "react-icons/fa";
 export { MdDelete as DeleteIcon, MdClear as ClearIcon } from "react-icons/md";
