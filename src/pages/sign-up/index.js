@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   AuthFormFooter,
   AuthFormHeader,
@@ -11,6 +11,7 @@ import {
   GithubIcon,
   GoogleIcon,
   PasswordIcon,
+  ProfileIcon,
   UserIcon,
 } from "../../resources/icons";
 import {
@@ -25,9 +26,11 @@ import { notify } from "../../helpers";
 import { Spinner } from "react-bootstrap";
 import { handleLoginWithProvider } from "../../helpers/authHelper";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { db } from "../../firebase/firebase";
+import { db, storage } from "../../firebase/firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const SignUp = () => {
+  const photoURLRef = useRef(null);
   const [state, setState] = useState({
     isLoading: false,
   });
@@ -36,6 +39,7 @@ const SignUp = () => {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm({
     defaultValues: signUpInitialState,
     mode: "all",
@@ -53,7 +57,17 @@ const SignUp = () => {
     }
   };
 
-  const handleSignUpWithEmail = async ({ username, email, password }) => {
+  const handleChangePhotoURL = (e) => {
+    const photo_url = e.target.files[0];
+    setValue("photo_url", photo_url);
+  };
+
+  const handleSignUpWithEmail = async ({
+    username,
+    email,
+    password,
+    photo_url,
+  }) => {
     setState((prevState) => ({
       ...prevState,
       isLoading: true,
@@ -63,20 +77,30 @@ const SignUp = () => {
       const { user = {} } = userCredential;
       if (!Object.keys(user).length > 0) return;
       const { displayName, phoneNumber, photoURL, uid } = user;
-      await updateProfileInFirebase(user, {
-        displayName: username,
+
+      const docRef = doc(db, "users", uid);
+      const storageRef = ref(storage, `profile/${uid}/${photo_url?.name}`);
+      const response = await uploadBytes(storageRef, photo_url, {
+        contentType: photo_url?.type ?? "",
       });
+      const url = await getDownloadURL(
+        ref(storage, response?.metadata?.fullPath)
+      );
+
       const payload = {
         username: displayName ?? username,
         email: user?.email,
         phone_number: phoneNumber,
-        photo_url: photoURL,
+        photo_url: photoURL ?? url,
         firebase_uid: uid,
         create_at: serverTimestamp(),
         follow: false,
       };
-      const docRef = doc(db, "users", uid);
       await setDoc(docRef, payload);
+      await updateProfileInFirebase(user, {
+        displayName: username,
+        photo_url: url,
+      });
     } catch (error) {
       notify({
         message: error?.message,
@@ -182,6 +206,26 @@ const SignUp = () => {
                           />
                         )}
                       />
+
+                      <div className="mt-3">
+                        <div className="input-group">
+                          <label
+                            htmlFor="photo_url"
+                            className="d-flex align-items-center gap-2 cursor--pointer"
+                          >
+                            <ProfileIcon />
+                            <span>Upload profile pic</span>
+                          </label>
+
+                          <input
+                            ref={photoURLRef}
+                            onChange={handleChangePhotoURL}
+                            id="photo_url"
+                            type="file"
+                            hidden
+                          />
+                        </div>
+                      </div>
                     </div>
                     <div className="d-grid">
                       <SubmitButton disabled={isLoading} type="submit">

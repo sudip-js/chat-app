@@ -1,6 +1,6 @@
 import React from "react";
 
-const ChatTopBar = () => {
+const ChatTopBar = ({ selectedUser }) => {
   return (
     <div className="p-3 p-lg-4 border-bottom user-chat-topbar">
       <div className="row align-items-center">
@@ -16,15 +16,20 @@ const ChatTopBar = () => {
             </div>
             <div className="me-3 ms-0">
               <img
-                src="assets/images/users/avatar-4.jpg"
+                src={
+                  selectedUser?.photo_url ?? "assets/images/users/avatar-4.jpg"
+                }
                 className="rounded-circle avatar-xs"
                 alt=""
+                style={{
+                  objectFit: "cover",
+                }}
               />
             </div>
             <div className="flex-grow-1 overflow-hidden">
               <h5 className="font-size-16 mb-0 text-truncate">
                 <a href="#" className="text-reset user-profile-show">
-                  Doris Brown
+                  {selectedUser?.username ?? ""}
                 </a>{" "}
                 <i className="ri-record-circle-fill font-size-10 text-success d-inline-block ms-1"></i>
               </h5>

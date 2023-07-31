@@ -9,8 +9,10 @@ import { useGetChatID } from "../../../../../../../hooks";
 import RenderMessage from "../common/RenderMessage";
 
 const ReceiverMessage = (props) => {
-  const { created_at, id: messageID, is_edit } = props;
+  const { created_at, id: messageID, is_edit, selectedUser } = props;
   const { chatID, user } = useGetChatID();
+
+  console.log({ selectedUser });
 
   const deleteMessage = async (deleteType) => {
     try {
@@ -59,7 +61,10 @@ const ReceiverMessage = (props) => {
     <li>
       <div className="conversation-list">
         <div className="chat-avatar">
-          <img src="assets/images/users/avatar-4.jpg" alt="" />
+          <img
+            src={selectedUser?.photo_url ?? "assets/images/users/avatar-4.jpg"}
+            alt=""
+          />
         </div>
 
         <div className="user-chat-content">

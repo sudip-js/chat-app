@@ -10,5 +10,6 @@ export {
   FaEdit as EditIcon,
   FaMicrophone as MicIcon,
   FaCheck as CheckIcon,
+  FaUser as ProfileIcon,
 } from "react-icons/fa";
 export { MdDelete as DeleteIcon, MdClear as ClearIcon } from "react-icons/md";

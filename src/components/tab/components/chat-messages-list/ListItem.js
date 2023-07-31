@@ -3,13 +3,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { generateChatId } from "../../../../utils";
 
-const ListItem = ({ username, firebase_uid, ...rest }) => {
+const ListItem = ({ username, firebase_uid, photo_url, ...rest }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector(({ auth }) => auth?.user);
   const query = new URLSearchParams(location?.search);
   const isActive = query.get("chat_id")?.includes(firebase_uid);
   const chatID = generateChatId(user?.firebase_uid, firebase_uid);
+
+  console.log({ ...rest });
 
   return (
     <li
@@ -20,9 +22,12 @@ const ListItem = ({ username, firebase_uid, ...rest }) => {
         <div className="d-flex">
           <div className="chat-user-img online align-self-center me-3 ms-0">
             <img
-              src="assets/images/users/avatar-2.jpg"
+              src={photo_url ?? "assets/images/users/avatar-2.jpg"}
               className="rounded-circle avatar-xs"
               alt=""
+              style={{
+                objectFit: "cover",
+              }}
             />
             <span className="user-status"></span>
           </div>

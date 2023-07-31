@@ -167,7 +167,8 @@ const AddUser = () => {
           <GrowSpinner />
         ) : data?.length ? (
           data.map((user) => {
-            const { firebase_uid, username } = user;
+            const { firebase_uid, username, photo_url } = user;
+            console.log({ user });
             return (
               <li key={firebase_uid}>
                 <a>
@@ -176,9 +177,12 @@ const AddUser = () => {
                       className={`chat-user-img online align-self-center me-3 ms-0`}
                     >
                       <img
-                        src="assets/images/users/avatar-8.jpg"
+                        src={photo_url ?? "assets/images/users/avatar-8.jpg"}
                         className="rounded-circle avatar-xs"
                         alt=""
+                        style={{
+                          objectFit: "cover",
+                        }}
                       />
                       <OverlayTrigger
                         placement="bottom"

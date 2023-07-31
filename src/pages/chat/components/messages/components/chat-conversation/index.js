@@ -9,7 +9,7 @@ import { notify } from "../../../../../../helpers";
 import { query } from "firebase/database";
 import { GrowSpinner } from "../../../../../../components";
 
-const ChatConversation = ({ setChatInputState }) => {
+const ChatConversation = ({ setChatInputState, selectedUser }) => {
   const location = useLocation();
   const user = useSelector(({ auth }) => auth?.user);
   const urlQuery = new URLSearchParams(location?.search);
@@ -79,7 +79,11 @@ const ChatConversation = ({ setChatInputState }) => {
                 }}
               />
             ) : (
-              <ReceiverMessage key={index} {...res} />
+              <ReceiverMessage
+                key={index}
+                {...res}
+                selectedUser={selectedUser}
+              />
             );
           })
         ) : (
