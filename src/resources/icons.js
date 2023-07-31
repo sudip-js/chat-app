@@ -1,4 +1,7 @@
-export { HiOutlineMail as EmailIcon } from "react-icons/hi";
+export {
+  HiOutlineMail as EmailIcon,
+  HiOutlineVideoCamera as VideoIcon,
+} from "react-icons/hi";
 export { BiUser as UserIcon } from "react-icons/bi";
 export { FiLock as PasswordIcon } from "react-icons/fi";
 export { FcGoogle as GoogleIcon } from "react-icons/fc";

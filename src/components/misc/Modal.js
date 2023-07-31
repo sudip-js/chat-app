@@ -9,6 +9,7 @@ const Modal = ({
   children,
   isLoading = null,
   isDisabled = undefined,
+  extraParams = null,
 }) => {
   console.log({ isDisabled });
   return (
@@ -17,6 +18,7 @@ const Modal = ({
       onHide={hide}
       backdrop="static"
       keyboard={false}
+      size={extraParams?.size ?? undefined}
     >
       <div className="modal-header">
         <h5

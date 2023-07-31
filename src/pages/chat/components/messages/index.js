@@ -21,6 +21,8 @@ const initialState = {
   mediaStream: null,
   mediaRecorder: null,
   audio: [],
+  isShowVideoRecordModal: false,
+  video: [],
 };
 const Messages = () => {
   const [chatInputState, setChatInputState] = useState(initialState);

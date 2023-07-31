@@ -70,7 +70,7 @@ export const useAudioRecorder = ({ state, setState, initialState }) => {
     else clearInterval(recordingInterval);
 
     return () => clearInterval(recordingInterval);
-  });
+  }, [initRecording]);
 
   useEffect(() => {
     if (mediaStream)

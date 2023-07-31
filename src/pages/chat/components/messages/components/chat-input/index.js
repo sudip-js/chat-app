@@ -1,10 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { Timestamp, doc, setDoc, updateDoc } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
 import { useSelector } from "react-redux";
 import { auth, db, storage } from "../../../../../../firebase/firebase";
 import { useGetChatID } from "../../../../../../hooks";
-import { ClearIcon, MicIcon } from "../../../../../../resources/icons";
+import {
+  ClearIcon,
+  MicIcon,
+  VideoIcon,
+} from "../../../../../../resources/icons";
 import Modal from "../../../../../../components/misc/Modal";
 import Picker from "emoji-picker-react";
 import { insertAtCursor } from "../../../../../../utils";
@@ -41,7 +45,6 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
     isLoadingAudioRecord,
     audio,
   } = chatInputState;
-  console.log({ chatInputState, isLoadingAttachments });
   const handleState = (newState) => {
     setChatInputState((prevState) => ({
       ...prevState,
@@ -181,7 +184,6 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
               await handleUploadMedia({ file, message });
             }
           }
-          console.log("all files are uploaded successfully.");
           if (fileInputRef?.current?.value) {
             fileInputRef.current.value = null;
           }
@@ -202,7 +204,6 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
               await handleUploadMedia({ file, message });
             }
           }
-          console.log("all files are uploaded successfully.");
           handleState({
             isLoadingAudioRecord: false,
             isShowAudioRecordModal: false,
@@ -307,13 +308,6 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
 
   const handleKeyDown = (e) => e.key === "Enter" && handleSendMessage();
 
-  useEffect(() => {
-    if (audio) {
-      // const url = URL?.createObjectURL(audio);
-      console.log({ audio });
-    }
-  }, [audio]);
-
   return (
     <>
       <div
@@ -401,6 +395,24 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
                     }
                   >
                     <MicIcon />
+                  </button>
+                </li>
+                <li
+                  className="list-inline-item"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Audio Record"
+                >
+                  <button
+                    type="button"
+                    className="btn btn-link text-decoration-none font-size-16 btn-lg waves-effect"
+                    onClick={() =>
+                      handleState({
+                        isShowVideoRecordModal: true,
+                      })
+                    }
+                  >
+                    <VideoIcon />
                   </button>
                 </li>
                 <li
