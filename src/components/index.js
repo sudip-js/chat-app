@@ -12,4 +12,3 @@ export {
 } from "./tab";
 
 export { GrowSpinner } from "./spinner";
-export { UserPresence } from "./misc";
