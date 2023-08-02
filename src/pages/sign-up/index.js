@@ -40,11 +40,14 @@ const SignUp = () => {
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm({
     defaultValues: signUpInitialState,
     mode: "all",
     resolver: yupResolver(signUpSchema),
   });
+
+  const watchPhotoURL = watch("photo_url");
 
   const handleSocialAuth = async (provider) => {
     const result = await handleLoginWithProvider(provider);
@@ -99,7 +102,7 @@ const SignUp = () => {
       await setDoc(docRef, payload);
       await updateProfileInFirebase(user, {
         displayName: username,
-        photo_url: url,
+        photoUrl: url,
       });
     } catch (error) {
       notify({
@@ -214,7 +217,11 @@ const SignUp = () => {
                             className="d-flex align-items-center gap-2 cursor--pointer"
                           >
                             <ProfileIcon />
-                            <span>Upload profile pic</span>
+                            {watchPhotoURL ? (
+                              <span>{watchPhotoURL?.name}</span>
+                            ) : (
+                              <span>Upload profile pic</span>
+                            )}
                           </label>
 
                           <input
