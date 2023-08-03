@@ -14,10 +14,7 @@ import {
   ProfileIcon,
   UserIcon,
 } from "../../resources/icons";
-import {
-  signUpWithEmail,
-  updateProfileInFirebase,
-} from "../../firebase/authFunctions";
+import { signUpWithEmail } from "../../firebase/authFunctions";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { signUpSchema } from "../../schema";
@@ -28,8 +25,12 @@ import { handleLoginWithProvider } from "../../helpers/authHelper";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db, storage } from "../../firebase/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { updateProfile } from "firebase/auth";
+import { login } from "../../redux/slices/authSlice";
+import { useDispatch } from "react-redux";
 
 const SignUp = () => {
+  const dispatch = useDispatch();
   const photoURLRef = useRef(null);
   const [state, setState] = useState({
     isLoading: false,
@@ -77,10 +78,8 @@ const SignUp = () => {
     }));
     try {
       const userCredential = await signUpWithEmail(email, password);
-      const { user = {} } = userCredential;
-      if (!Object.keys(user).length > 0) return;
+      const user = userCredential?.user;
       const { displayName, phoneNumber, photoURL, uid } = user;
-
       const docRef = doc(db, "users", uid);
       const storageRef = ref(storage, `profile/${uid}/${photo_url?.name}`);
       const response = await uploadBytes(storageRef, photo_url, {
@@ -89,7 +88,10 @@ const SignUp = () => {
       const url = await getDownloadURL(
         ref(storage, response?.metadata?.fullPath)
       );
-
+      await updateProfile(user, {
+        displayName: username,
+        photoURL: url,
+      });
       const payload = {
         username: displayName ?? username,
         email: user?.email,
@@ -100,10 +102,15 @@ const SignUp = () => {
         follow: false,
       };
       await setDoc(docRef, payload);
-      await updateProfileInFirebase(user, {
-        displayName: username,
-        photoUrl: url,
-      });
+      dispatch(
+        login({
+          username: displayName ?? username,
+          email: user?.email,
+          phone_number: phoneNumber,
+          photo_url: photoURL ?? url,
+          firebase_uid: uid,
+        })
+      );
     } catch (error) {
       notify({
         message: error?.message,

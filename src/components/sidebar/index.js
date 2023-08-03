@@ -3,8 +3,11 @@ import React from "react";
 import swal from "sweetalert";
 import { notify } from "../../helpers";
 import { auth } from "../../firebase/firebase";
+import { useSelector } from "react-redux";
 
 const SidebarMenu = () => {
+  const user = useSelector(({ auth }) => auth?.user);
+  console.log({ user });
   const handleLogout = () => {
     try {
       swal({
@@ -139,7 +142,7 @@ const SidebarMenu = () => {
               aria-expanded="false"
             >
               <img
-                src="assets/images/users/avatar-1.jpg"
+                src={user?.photo_url}
                 alt=""
                 className="profile-user rounded-circle"
               />
@@ -188,7 +191,7 @@ const SidebarMenu = () => {
               aria-expanded="false"
             >
               <img
-                src="assets/images/users/avatar-1.jpg"
+                src={user?.photo_url}
                 alt=""
                 className="profile-user rounded-circle"
               />

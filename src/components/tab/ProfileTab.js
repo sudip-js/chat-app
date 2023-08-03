@@ -1,6 +1,9 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 const ProfileTab = () => {
+  const user = useSelector(({ auth }) => auth?.user);
+  console.log({ user });
   return (
     <div
       className="tab-pane"
@@ -42,13 +45,13 @@ const ProfileTab = () => {
         <div className="text-center p-4 border-bottom">
           <div className="mb-4">
             <img
-              src="assets/images/users/avatar-1.jpg"
+              src={user?.photo_url}
               className="rounded-circle avatar-lg img-thumbnail"
               alt=""
             />
           </div>
 
-          <h5 className="font-size-16 mb-1 text-truncate">Patricia Smith</h5>
+          <h5 className="font-size-16 mb-1 text-truncate">{user?.username}</h5>
           <p className="text-muted text-truncate mb-1">
             <i className="ri-record-circle-fill font-size-10 text-success me-1 ms-0 d-inline-block"></i>{" "}
             Active
@@ -91,12 +94,12 @@ const ProfileTab = () => {
                 <div className="accordion-body">
                   <div>
                     <p className="text-muted mb-1">Name</p>
-                    <h5 className="font-size-14">Patricia Smith</h5>
+                    <h5 className="font-size-14">{user?.username}</h5>
                   </div>
 
                   <div className="mt-4">
                     <p className="text-muted mb-1">Email</p>
-                    <h5 className="font-size-14">adc@123.com</h5>
+                    <h5 className="font-size-14">{user?.email}</h5>
                   </div>
 
                   <div className="mt-4">
