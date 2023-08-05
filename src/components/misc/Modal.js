@@ -43,23 +43,25 @@ const Modal = ({
       >
         {children}
       </div>
-      <div className="modal-footer">
-        <button
-          type="button"
-          className="btn btn-danger w-25"
-          onClick={() => hide("cancel")}
-        >
-          Close
-        </button>
-        <button
-          type="button"
-          className="btn btn-primary w-25"
-          onClick={() => hide("submit")}
-          disabled={isDisabled || isLoading}
-        >
-          {isLoading ? <Spinner size="sm" /> : submitText}
-        </button>
-      </div>
+      {extraParams?.showFooter && (
+        <div className="modal-footer">
+          <button
+            type="button"
+            className="btn btn-danger w-25"
+            onClick={() => hide("cancel")}
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary w-25"
+            onClick={() => hide("submit")}
+            disabled={isDisabled || isLoading}
+          >
+            {isLoading ? <Spinner size="sm" /> : submitText}
+          </button>
+        </div>
+      )}
     </BootstrapModal>
   );
 };

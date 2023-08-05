@@ -10,6 +10,7 @@ export const TextInput = forwardRef(
       placeholder = "",
       error = null,
       isForgotPassword = false,
+      note = null,
       ...rest
     },
     ref
@@ -17,8 +18,9 @@ export const TextInput = forwardRef(
     const navigate = useNavigate();
     return (
       <>
-        <div className="d-flex align-items-center justify-content-between">
+        <div className="d-flex flex-column justify-content-between">
           {label && <label className="form-label">{label}</label>}{" "}
+          {note && <p className="form-label mb-1 text-white">{note}</p>}{" "}
           {isForgotPassword && (
             <label
               onClick={() => navigate("/forgot-password")}
@@ -34,14 +36,28 @@ export const TextInput = forwardRef(
               <Icon />
             </span>
           )}
-          <input
-            ref={ref}
-            type={type}
-            className="form-control form-control-lg bg-light-subtle border-light"
-            placeholder={placeholder}
-            aria-label={placeholder}
-            {...rest}
-          />
+          {type === "text" && (
+            <input
+              ref={ref}
+              type={type}
+              className="form-control form-control-lg bg-light-subtle border-light"
+              placeholder={placeholder}
+              aria-label={placeholder}
+              {...rest}
+            />
+          )}
+          {type === "textarea" && (
+            <textarea
+              ref={ref}
+              type={type}
+              className="form-control form-control-lg bg-light-subtle border-light"
+              placeholder={placeholder}
+              aria-label={placeholder}
+              {...rest}
+              rows="4"
+              cols="50"
+            />
+          )}
         </div>
         {error && <span className="error">{error}</span>}
       </>

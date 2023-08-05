@@ -100,38 +100,7 @@ const SidebarMenu = () => {
               <i className="ri-group-line"></i>
             </a>
           </li>
-          <li
-            className="nav-item"
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            title="Contacts"
-          >
-            <a
-              className="nav-link"
-              id="pills-contacts-tab"
-              data-bs-toggle="pill"
-              href="#pills-contacts"
-              role="tab"
-            >
-              <i className="ri-contacts-line"></i>
-            </a>
-          </li>
-          <li
-            className="nav-item"
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            title="Settings"
-          >
-            <a
-              className="nav-link"
-              id="pills-setting-tab"
-              data-bs-toggle="pill"
-              href="#pills-setting"
-              role="tab"
-            >
-              <i className="ri-settings-2-line"></i>
-            </a>
-          </li>
+
           <li className="nav-item dropdown profile-user-dropdown d-inline-block d-lg-none">
             <a
               className="nav-link dropdown-toggle"
