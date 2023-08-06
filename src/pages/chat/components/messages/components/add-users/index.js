@@ -168,7 +168,6 @@ const AddUser = () => {
         ) : data?.length ? (
           data.map((user) => {
             const { firebase_uid, username, photo_url } = user;
-            console.log({ user });
             return (
               <li key={firebase_uid}>
                 <a>

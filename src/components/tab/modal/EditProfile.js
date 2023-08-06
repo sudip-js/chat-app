@@ -62,7 +62,7 @@ const EditProfile = ({
       {" "}
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="d-flex flex-column align-items-center mb-2">
-          <div class="profile-image-container">
+          <div className="profile-image-container">
             <input
               hidden
               type="file"
@@ -71,7 +71,7 @@ const EditProfile = ({
             />
             <img src={profileImage} alt="Image" className="image" />
             <div
-              class="edit-icon"
+              className="edit-icon"
               onClick={() => inputFileRef?.current?.click()}
             >
               <EditImageIcon className="large-font" />

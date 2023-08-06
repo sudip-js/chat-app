@@ -2,14 +2,21 @@ import React from "react";
 import ListItem from "./ListItem";
 import { useFetchData } from "../../../../hooks";
 import { GrowSpinner } from "../../../spinner";
+import { PlusIcon } from "../../../../resources/icons";
 
-const ChatMessagesList = () => {
+const ChatMessagesList = ({ handleOpenModal = () => null }) => {
   const { isLoading, data } = useFetchData({
     collectionRef: "users-chats",
   });
   return (
     <div>
-      <h5 className="mb-3 px-3 font-size-16">Recent</h5>
+      <div className="d-flex align-items-center mb-3 px-3 justify-content-between">
+        <h5 className="mb-0 font-size-16 text-uppercase">Direct Messages</h5>
+        <PlusIcon
+          onClick={handleOpenModal}
+          className="large-font cursor--pointer text-green"
+        />
+      </div>
       <div className="chat-message-list px-2" data-simplebar>
         <ul className="list-unstyled chat-list chat-user-list">
           {isLoading ? (

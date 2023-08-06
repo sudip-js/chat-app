@@ -3,6 +3,7 @@ export {
   HiOutlineVideoCamera as VideoIcon,
   HiStatusOnline as OnlineStatus,
   HiOutlineClock as ClockIcon,
+  HiOutlinePlus as PlusIcon,
 } from "react-icons/hi";
 export { BiUser as UserIcon } from "react-icons/bi";
 export {
@@ -20,7 +21,6 @@ export {
   FaMicrophone as MicIcon,
   FaCheck as CheckIcon,
   FaUser as ProfileIcon,
-  FaPlus as PlusIcon,
 } from "react-icons/fa";
 export {
   MdDelete as DeleteIcon,

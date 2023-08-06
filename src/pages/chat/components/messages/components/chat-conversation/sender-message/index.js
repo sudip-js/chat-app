@@ -7,6 +7,7 @@ import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../../../../../../firebase/firebase";
 import { useGetChatID } from "../../../../../../../hooks";
 import RenderMessage from "../common/RenderMessage";
+import Avatar from "../../../../../../../resources/images/avatar-profile.png";
 
 const SenderMessage = (props) => {
   const {
@@ -16,7 +17,7 @@ const SenderMessage = (props) => {
     id: messageID,
     is_edit,
   } = props;
-  const { senderID, receiverID, chatID } = useGetChatID();
+  const { senderID, receiverID, chatID, user } = useGetChatID();
   const deleteMessage = async (deleteType) => {
     try {
       const senderUserMessageRef = doc(
@@ -91,7 +92,11 @@ const SenderMessage = (props) => {
     <li className="right">
       <div className="conversation-list">
         <div className="chat-avatar">
-          <img src="assets/images/users/avatar-4.jpg" alt="" />
+          <img
+            className="image"
+            src={user?.photo_url ?? Avatar}
+            alt="Profile Image"
+          />
         </div>
 
         <div className="user-chat-content">
@@ -116,7 +121,7 @@ const SenderMessage = (props) => {
               }}
             />
           </div>
-          <div className="conversation-name">Doris Brown</div>
+          <div className="conversation-name">{user?.username}</div>
         </div>
       </div>
     </li>

@@ -58,9 +58,8 @@ const App = () => {
                 ...rest,
               })
             );
-            console.log("Document Data:", data);
           } else {
-            console.log("Document not found in Firestore.");
+            console.error("Document not found in Firestore.");
           }
         },
         (error) => {

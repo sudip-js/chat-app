@@ -52,7 +52,6 @@ const ProfileTab = () => {
       const userRef = doc(db, `users/${user?.firebase_uid}`);
       if (isEditProfile) {
         const file = data?.photo_url;
-        console.log({ file });
         let url = null;
         if (file) {
           const storageRef = ref(
@@ -77,12 +76,10 @@ const ProfileTab = () => {
         });
       }
       if (isSetStatus) {
-        console.log("here");
         await updateDoc(userRef, {
           away_status: data?.away_status ?? null,
         });
       }
-      console.log("update here");
     } catch (error) {
       console.error({ error });
     } finally {
@@ -113,12 +110,16 @@ const ProfileTab = () => {
           <div className="profile">
             <div className="py-2">
               <div className="image-container mb-2">
-                <img className="profile-image" src={user?.photo_url} alt="" />
+                <img
+                  className="profile-image"
+                  src={user?.photo_url}
+                  alt="Profile Image"
+                />
               </div>
               <div className="d-flex flex-column mb-2 gap-2">
                 <div className="d-flex align-items-start justify-content-between">
                   <div>
-                    <h6 className="extra-large-font mb-1">Sudip</h6>
+                    <h6 className="extra-large-font mb-1">{user?.username}</h6>
                     {user?.pronunciation_name && (
                       <h6 className="medium-font">
                         ({user.pronunciation_name})

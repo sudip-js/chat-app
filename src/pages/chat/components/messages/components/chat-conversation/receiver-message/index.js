@@ -12,8 +12,6 @@ const ReceiverMessage = (props) => {
   const { created_at, id: messageID, is_edit, selectedUser } = props;
   const { chatID, user } = useGetChatID();
 
-  console.log({ selectedUser });
-
   const deleteMessage = async (deleteType) => {
     try {
       const loggedInUserMsgRef = doc(
@@ -89,7 +87,7 @@ const ReceiverMessage = (props) => {
               }}
             />
           </div>
-          <div className="conversation-name">Doris Brown</div>
+          <div className="conversation-name">{selectedUser?.username}</div>
         </div>
       </div>
     </li>

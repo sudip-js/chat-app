@@ -28,11 +28,10 @@ const initialState = {
   video: [],
 };
 const Messages = () => {
-  const [chatInputState, setChatInputState] = useState(initialState);
-
   const { data } = useFetchData({
     collectionRef: "users-chats",
   });
+  const [chatInputState, setChatInputState] = useState(initialState);
   const location = useLocation();
   const user = useSelector(({ auth }) => auth?.user);
   const query = new URLSearchParams(location?.search);
@@ -42,7 +41,6 @@ const Messages = () => {
     .filter((id) => id !== user?.firebase_uid)
     ?.at(0);
   const selectedUser = data?.find((res) => res?.firebase_uid === receiverID);
-  console.log({ selectedUser });
 
   return (
     <div className="w-100 overflow-hidden position-relative">

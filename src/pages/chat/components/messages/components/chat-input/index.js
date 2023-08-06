@@ -51,6 +51,7 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
       ...newState,
     }));
   };
+
   const handleOnChange = (e) => {
     const value = e.target.value;
     handleState({

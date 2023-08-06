@@ -11,7 +11,6 @@ const Modal = ({
   isDisabled = undefined,
   extraParams = null,
 }) => {
-  console.log({ isDisabled });
   return (
     <BootstrapModal
       show={show}

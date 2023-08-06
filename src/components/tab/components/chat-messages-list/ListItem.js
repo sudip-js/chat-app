@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { generateChatId } from "../../../../utils";
 
-const ListItem = ({ username, firebase_uid, photo_url, ...rest }) => {
+const ListItem = ({ username, firebase_uid, photo_url }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector(({ auth }) => auth?.user);
@@ -11,11 +11,9 @@ const ListItem = ({ username, firebase_uid, photo_url, ...rest }) => {
   const isActive = query.get("chat_id")?.includes(firebase_uid);
   const chatID = generateChatId(user?.firebase_uid, firebase_uid);
 
-  console.log({ ...rest });
-
   return (
     <li
-      className={isActive ? "active" : ""}
+      className={`cursor--pointer ${isActive ? "active" : ""}`}
       onClick={() => navigate(`/chat?chat_id=${chatID}`)}
     >
       <a>
@@ -34,6 +32,14 @@ const ListItem = ({ username, firebase_uid, photo_url, ...rest }) => {
 
           <div className="flex-grow-1 overflow-hidden">
             <h5 className="text-truncate font-size-15 mb-1">{username}</h5>
+            {/* <p class="chat-user-message text-truncate mb-0">
+              typing
+              <span class="animate-typing">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </span>
+            </p> */}
             <p className="chat-user-message text-truncate mb-0">
               Last messages....
             </p>

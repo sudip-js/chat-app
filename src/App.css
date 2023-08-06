@@ -24,6 +24,7 @@
 .text-green{
     color: #06d6a0 !important;
 }
+
 .text-yellow{
     color: #ffd166 !important;
 }
@@ -157,6 +158,10 @@
   visibility: visible;
 }
 
+
+.chat-avatar .image{
+  object-fit: contain;
+}
 
 
 

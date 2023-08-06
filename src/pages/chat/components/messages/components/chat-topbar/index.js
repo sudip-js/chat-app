@@ -1,6 +1,7 @@
 import React from "react";
+import { UserIcon } from "../../../../../../resources/icons";
 
-const ChatTopBar = ({ selectedUser }) => {
+const ChatTopBar = ({ selectedUser = null }) => {
   return (
     <div className="p-3 p-lg-4 border-bottom user-chat-topbar">
       <div className="row align-items-center">
@@ -62,75 +63,9 @@ const ChatTopBar = ({ selectedUser }) => {
             </li>
 
             <li className="list-inline-item d-none d-lg-inline-block me-2 ms-0">
-              <button
-                type="button"
-                className="btn nav-btn"
-                data-bs-toggle="modal"
-                data-bs-target="#audiocallModal"
-              >
-                <i className="ri-phone-line"></i>
-              </button>
-            </li>
-
-            <li className="list-inline-item d-none d-lg-inline-block me-2 ms-0">
-              <button
-                type="button"
-                className="btn nav-btn"
-                data-bs-toggle="modal"
-                data-bs-target="#videocallModal"
-              >
-                <i className="ri-vidicon-line"></i>
-              </button>
-            </li>
-
-            <li className="list-inline-item d-none d-lg-inline-block me-2 ms-0">
               <button type="button" className="btn nav-btn user-profile-show">
-                <i className="ri-user-2-line"></i>
+                <UserIcon />
               </button>
-            </li>
-
-            <li className="list-inline-item">
-              <div className="dropdown">
-                <button
-                  className="btn nav-btn dropdown-toggle"
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <i className="ri-more-fill"></i>
-                </button>
-                <div className="dropdown-menu dropdown-menu-end">
-                  <a
-                    className="dropdown-item d-block d-lg-none user-profile-show"
-                    href="#"
-                  >
-                    View profile{" "}
-                    <i className="ri-user-2-line float-end text-muted"></i>
-                  </a>
-                  <a
-                    className="dropdown-item d-block d-lg-none"
-                    href="#"
-                    data-bs-toggle="modal"
-                    data-bs-target="#audiocallModal"
-                  >
-                    Audio <i className="ri-phone-line float-end text-muted"></i>
-                  </a>
-                  <a
-                    className="dropdown-item d-block d-lg-none"
-                    href="#"
-                    data-bs-toggle="modal"
-                    data-bs-target="#videocallModal"
-                  >
-                    Video{" "}
-                    <i className="ri-vidicon-line float-end text-muted"></i>
-                  </a>
-                  <a className="dropdown-item">
-                    Clear Chat
-                    <i className="ri-delete-bin-line float-end text-muted"></i>
-                  </a>
-                </div>
-              </div>
             </li>
           </ul>
         </div>

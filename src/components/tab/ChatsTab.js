@@ -15,6 +15,12 @@ const ChatsTab = () => {
       ...newState,
     }));
   };
+
+  const handleOpenModal = () => {
+    handleState({
+      isOpenSelectUserModal: !isOpenSelectUserModal,
+    });
+  };
   return (
     <>
       <div
@@ -28,17 +34,6 @@ const ChatsTab = () => {
           <div className="px-4 pt-4">
             <div className="mb-4 d-flex align-items-center justify-content-between">
               <h4>Chats</h4>
-              <button
-                type="button"
-                onClick={() =>
-                  handleState({
-                    isOpenSelectUserModal: true,
-                  })
-                }
-                className="btn btn-success"
-              >
-                Add User
-              </button>
             </div>
             <div className="search-box chat-search-box">
               <div className="input-group mb-3 rounded-3">
@@ -150,7 +145,11 @@ const ChatsTab = () => {
           </div>
           {/* <!-- end user status --> */}
 
-          <ChatMessagesList />
+          <ChatMessagesList
+            {...{
+              handleOpenModal,
+            }}
+          />
         </div>
         {/* <!-- Start chats content --> */}
       </div>

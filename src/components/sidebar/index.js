@@ -7,7 +7,6 @@ import { useSelector } from "react-redux";
 
 const SidebarMenu = () => {
   const user = useSelector(({ auth }) => auth?.user);
-  console.log({ user });
   const handleLogout = () => {
     try {
       swal({

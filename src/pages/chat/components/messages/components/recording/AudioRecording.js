@@ -65,7 +65,6 @@ const AudioRecording = ({
             </button>
             {Array.isArray(audio) && audio.length
               ? audio.map((blob, index) => {
-                  console.log({ blob });
                   return (
                     <div
                       key={index}
