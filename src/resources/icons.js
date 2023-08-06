@@ -10,7 +10,10 @@ export {
   BsEmojiLaughing as EmojiIcon,
 } from "react-icons/bs";
 export { FiLock as PasswordIcon } from "react-icons/fi";
-export { FcGoogle as GoogleIcon } from "react-icons/fc";
+export {
+  FcGoogle as GoogleIcon,
+  FcEditImage as EditImageIcon,
+} from "react-icons/fc";
 export {
   FaGithub as GithubIcon,
   FaEdit as EditIcon,

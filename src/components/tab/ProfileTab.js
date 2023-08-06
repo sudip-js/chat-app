@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import {
   ClockIcon,
@@ -10,16 +10,12 @@ import {
 } from "../../resources/icons";
 import Modal from "../misc/Modal";
 import { useState } from "react";
-import {
-  AboutMe,
-  EditContactInformation,
-  EditProfile,
-  SetStatus,
-} from "./modal";
+import { EditContactInformation, EditProfile, SetStatus } from "./modal";
 import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../firebase/firebase";
+import { db, storage } from "../../firebase/firebase";
 import { TextInput } from "../form";
 import { PROFILE_CONSTANTS } from "../../constants";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const initialState = {
   isOpenEditModal: null,
@@ -34,7 +30,6 @@ const ProfileTab = () => {
   const isEditContact =
     isOpenEditModal === PROFILE_CONSTANTS.CONTACT_INFORMATION;
   const isSetStatus = isOpenEditModal === PROFILE_CONSTANTS.SET_STATUS;
-  const isEditAboutMe = isOpenEditModal === PROFILE_CONSTANTS.ABOUT_ME;
 
   const handleState = (newState) => {
     setState((prevState) => ({
@@ -44,22 +39,36 @@ const ProfileTab = () => {
   };
 
   const handleEditClick = (editType) => {
-    console.log("here");
     handleState({
       isOpenEditModal: editType,
     });
   };
 
   const handleEdit = async (data) => {
-    console.log("here");
     handleState({
       isLoading: isOpenEditModal,
     });
     try {
       const userRef = doc(db, `users/${user?.firebase_uid}`);
       if (isEditProfile) {
+        const file = data?.photo_url;
+        console.log({ file });
+        let url = null;
+        if (file) {
+          const storageRef = ref(
+            storage,
+            `profile/${user?.firebase_uid}/${file?.name}`
+          );
+          const response = await uploadBytes(storageRef, file, {
+            contentType: file?.type ?? "",
+          });
+          url = await getDownloadURL(
+            ref(storage, response?.metadata?.fullPath)
+          );
+        }
         await updateDoc(userRef, {
           pronunciation_name: data?.pronunciation_name ?? null,
+          photo_url: url ?? null,
         });
       }
       if (isEditContact) {
@@ -192,37 +201,6 @@ const ProfileTab = () => {
                 </p>
               )}
             </div>
-            <div className="mb-2 d-flex flex-column gap-2 py-2">
-              <div className="d-flex align-items-center justify-content-between">
-                <h6 className="mb-0">About me</h6>
-                <EditIcon
-                  onClick={() => handleEditClick(PROFILE_CONSTANTS.ABOUT_ME)}
-                  className="large-font"
-                />
-              </div>
-
-              <p className="link mb-0">
-                <span
-                  onClick={() => handleEditClick(PROFILE_CONSTANTS.ABOUT_ME)}
-                >
-                  <PlusIcon /> Add ChatBOT
-                </span>
-              </p>
-              <p className="link mb-0">
-                <span
-                  onClick={() => handleEditClick(PROFILE_CONSTANTS.ABOUT_ME)}
-                >
-                  <PlusIcon /> Add Start Date
-                </span>
-              </p>
-              <p className="link mb-0">
-                <span
-                  onClick={() => handleEditClick(PROFILE_CONSTANTS.ABOUT_ME)}
-                >
-                  <PlusIcon /> Add Role Description
-                </span>
-              </p>
-            </div>
           </div>
         </div>
       </div>
@@ -266,15 +244,6 @@ const ProfileTab = () => {
         )}
         {isSetStatus && (
           <SetStatus
-            {...{
-              onSubmit: handleEdit,
-              user,
-              isLoading,
-            }}
-          />
-        )}
-        {isEditAboutMe && (
-          <AboutMe
             {...{
               onSubmit: handleEdit,
               user,
