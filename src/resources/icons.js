@@ -11,6 +11,7 @@ export {
   BsEmojiLaughing as EmojiIcon,
 } from "react-icons/bs";
 export { FiLock as PasswordIcon } from "react-icons/fi";
+export { RiSendPlaneFill as SendIcon } from "react-icons/ri";
 export {
   FcGoogle as GoogleIcon,
   FcEditImage as EditImageIcon,

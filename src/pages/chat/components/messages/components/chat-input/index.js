@@ -302,15 +302,10 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
     }
   };
 
-  const handleRecordAudio = (type) => {
-    if (type === "submit") {
-      handleSendMessage();
-    } else {
-      handleState({
-        isShowAudioRecordModal: false,
-        audio: [],
-      });
-    }
+  const handleRecordAudio = () => {
+    handleState({
+      isShowAudioRecordModal: false,
+    });
   };
 
   const handleKeyDown = (e) => e.key === "Enter" && handleSendMessage();
@@ -347,6 +342,8 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
       handleDocUpdate(false, "", "");
     }
   }, [isTyping]);
+
+  console.log({ audio });
 
   return (
     <>

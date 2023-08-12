@@ -1,10 +1,22 @@
 import React from "react";
-import { CheckIcon, ClearIcon } from "../../../../../../resources/icons";
+import {
+  CheckIcon,
+  ClearIcon,
+  SendIcon,
+} from "../../../../../../resources/icons";
 import {
   formatMinutes,
   formatSeconds,
 } from "../../../../../../utils/date-time";
 import { useAudioRecorder } from "../../../../../../hooks";
+import { useState } from "react";
+import { Spinner } from "react-bootstrap";
+import {
+  useGetChatID,
+  useUploadDataToFirebase,
+} from "../../../../../../hooks/chats";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../../../../firebase/firebase";
 
 const AudioRecording = ({
   chatInputState,
@@ -23,6 +35,38 @@ const AudioRecording = ({
     setState: setChatInputState,
     initialState: audioRecordingInitialState,
   });
+  const { onSubmit } = useUploadDataToFirebase();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSendAudio = async () => {
+    try {
+      if (Array.isArray(audio) && audio.length) {
+        setIsLoading(true);
+        onAuthStateChanged(auth, async (userResponse) => {
+          if (userResponse) {
+            for (let file of audio) {
+              await onSubmit({
+                file,
+              });
+            }
+          }
+          setChatInputState((prev) => ({
+            ...prev,
+            isShowAudioRecordModal: false,
+            audio: [],
+          }));
+          setIsLoading(false);
+        });
+      }
+    } catch (error) {
+      setChatInputState((prev) => ({
+        ...prev,
+        isShowAudioRecordModal: false,
+        audio: [],
+      }));
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -59,7 +103,7 @@ const AudioRecording = ({
             <button
               onClick={handleStartRecording}
               type="button"
-              className="btn btn-success"
+              className="btn btn-primary"
             >
               Start Recording
             </button>
@@ -80,6 +124,17 @@ const AudioRecording = ({
                         className="btn btn-danger"
                       >
                         <ClearIcon className="extra-large-font" />
+                      </button>
+                      <button
+                        onClick={handleSendAudio}
+                        type="button"
+                        className="btn btn-success"
+                      >
+                        {isLoading ? (
+                          <Spinner size="sm" />
+                        ) : (
+                          <SendIcon className="extra-large-font" />
+                        )}
                       </button>
                     </div>
                   );

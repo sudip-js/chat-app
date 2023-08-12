@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import {
+  Timestamp,
+  collection,
+  doc,
+  onSnapshot,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { useSelector } from "react-redux";
-import { db } from "../firebase/firebase";
+import { db, storage } from "../firebase/firebase";
 import { notify } from "../helpers";
+import { uuidv4 } from "@firebase/util";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 const initialState = {
   isLoading: false,
@@ -75,5 +86,85 @@ export const useGetChatID = () => {
     receiverID,
     chatID,
     user,
+  };
+};
+
+export const useUploadDataToFirebase = () => {
+  const { chatID, receiverID, senderID, user } = useGetChatID();
+  const onSubmit = ({ file = null, message = "" }) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const currentTime = Timestamp.now();
+        const messageID = uuidv4();
+        const senderUserRef = doc(db, `users-chats/${senderID}/chats`, chatID);
+        const receiverUserRef = doc(
+          db,
+          `users-chats/${receiverID}/chats`,
+          chatID
+        );
+        const senderUserMsgRef = doc(
+          db,
+          `users-chats/${senderID}/chats/${chatID}/messages`,
+          messageID
+        );
+        const receiverUserMsgRef = doc(
+          db,
+          `users-chats/${receiverID}/chats/${chatID}/messages`,
+          messageID
+        );
+
+        const storageRef = ref(storage, `media/${chatID}/${messageID}`);
+        const response = await uploadBytes(storageRef, file, {
+          contentType: file?.type ?? "",
+        });
+        const url = await getDownloadURL(
+          ref(storage, response?.metadata?.fullPath)
+        );
+        await setDoc(senderUserMsgRef, {
+          id: messageID,
+          message: url,
+          created_at: currentTime,
+          sender_id: senderID,
+          sender_email: user?.email,
+          type: response?.metadata?.contentType,
+          file_ame: file?.name ?? "",
+          is_edit: false,
+        });
+        await setDoc(receiverUserMsgRef, {
+          id: messageID,
+          message: url,
+          created_at: currentTime,
+          sender_id: senderID,
+          sender_email: user?.email,
+          type: response?.metadata?.contentType,
+          file_ame: file?.name ?? "",
+          is_edit: false,
+        });
+        await updateDoc(senderUserRef, {
+          last_info: {
+            time: Timestamp.now(),
+            last_message: message,
+            type: response?.metadata?.contentType,
+          },
+          should_notify: true,
+          send_by: senderID,
+        });
+        await updateDoc(receiverUserRef, {
+          last_info: {
+            time: Timestamp.now(),
+            last_message: message,
+            type: response?.metadata?.contentType,
+          },
+          should_notify: true,
+          send_by: senderID,
+        });
+        resolve();
+      } catch (error) {
+        reject(new Error(error));
+      }
+    });
+  };
+  return {
+    onSubmit,
   };
 };
