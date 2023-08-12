@@ -26,6 +26,7 @@ const initialState = {
   audio: [],
   isShowVideoRecordModal: false,
   video: [],
+  isTyping: false,
 };
 const Messages = () => {
   const { data } = useFetchData({

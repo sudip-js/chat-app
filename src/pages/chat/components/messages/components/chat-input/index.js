@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Timestamp, doc, setDoc, updateDoc } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
 import { useSelector } from "react-redux";
@@ -44,6 +44,7 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
     isShowAudioRecordModal,
     isLoadingAudioRecord,
     audio,
+    isTyping,
   } = chatInputState;
   const handleState = (newState) => {
     setChatInputState((prevState) => ({
@@ -58,6 +59,11 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
       message: value,
       typingType: "typing-text",
     });
+    if (!isTyping) {
+      handleState({
+        isTyping: true,
+      });
+    }
   };
   const handleChangeFile = (e) => {
     const files = e.target.files;
@@ -308,6 +314,39 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
   };
 
   const handleKeyDown = (e) => e.key === "Enter" && handleSendMessage();
+
+  const handleDocUpdate = async (val, id, name) => {
+    console.log({ receiverID, name });
+    try {
+      const myTypingRef = doc(db, `users-chats/${receiverID}/chats`, chatID);
+      await updateDoc(myTypingRef, {
+        is_typing: val,
+        who_is_typing_name: name,
+        who_is_typing_id: id,
+      });
+    } catch (error) {
+      console.error({ error });
+    }
+  };
+
+  useEffect(() => {
+    const debounceTimeout = setTimeout(() => {
+      handleState({
+        isTyping: false,
+      });
+    }, 1000);
+    return () => {
+      clearTimeout(debounceTimeout);
+    };
+  }, [message]);
+
+  useEffect(() => {
+    if (isTyping) {
+      handleDocUpdate(true, user?.firebase_uid, user?.username);
+    } else {
+      handleDocUpdate(false, "", "");
+    }
+  }, [isTyping]);
 
   return (
     <>

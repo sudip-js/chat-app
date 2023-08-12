@@ -3,13 +3,31 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { generateChatId } from "../../../../utils";
 
-const ListItem = ({ username, firebase_uid, photo_url }) => {
+const ListItem = ({
+  username,
+  firebase_uid,
+  photo_url,
+  is_typing,
+  who_is_typing_id,
+}) => {
+  console.log({ firebase_uid });
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector(({ auth }) => auth?.user);
   const query = new URLSearchParams(location?.search);
+  const receiverID = query
+    .get("chat_id")
+    ?.split("_")
+    ?.filter((id) => id !== user?.firebase_uid)
+    ?.at(0);
   const isActive = query.get("chat_id")?.includes(firebase_uid);
   const chatID = generateChatId(user?.firebase_uid, firebase_uid);
+
+  const handleTypingStatus = (chat) => {
+    return receiverID === chat?.uid;
+  };
+
+  console.log({ is_typing });
 
   return (
     <li
@@ -32,17 +50,37 @@ const ListItem = ({ username, firebase_uid, photo_url }) => {
 
           <div className="flex-grow-1 overflow-hidden">
             <h5 className="text-truncate font-size-15 mb-1">{username}</h5>
-            {/* <p class="chat-user-message text-truncate mb-0">
-              typing
-              <span class="animate-typing">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-              </span>
-            </p> */}
-            <p className="chat-user-message text-truncate mb-0">
-              Last messages....
-            </p>
+
+            {/* {is_typing &&
+            handleTypingStatus(firebase_uid) &&
+            who_is_typing_id !== user.firebase_uid ? (
+              <p class="chat-user-message text-truncate mb-0">
+                typing
+                <span class="animate-typing">
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                </span>
+              </p>
+            ) : (
+              <p className="chat-user-message text-truncate mb-0">
+                Last messages....
+              </p>
+            )} */}
+            {is_typing && who_is_typing_id !== user.firebase_uid ? (
+              <p class="chat-user-message text-truncate mb-0">
+                typing
+                <span class="animate-typing">
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                </span>
+              </p>
+            ) : (
+              <p className="chat-user-message text-truncate mb-0">
+                Last messages....
+              </p>
+            )}
           </div>
           <div className="font-size-11">05 min</div>
         </div>

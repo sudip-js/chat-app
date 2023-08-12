@@ -103,6 +103,7 @@ const AddUser = () => {
             created_at: serverTimestamp(),
             chat_type: "1-1",
             chat_id: chatID,
+            firebase_uid: receiverID,
             username: participant?.username,
             email: participant?.email,
             phone_number: participant?.phone_number,
@@ -118,10 +119,12 @@ const AddUser = () => {
             who_is_typing_name: "",
             who_is_typing_id: "",
           });
+
           await setDoc(receiverUserChatsRef, {
             created_at: serverTimestamp(),
             chat_type: "1-1",
             chat_id: chatID,
+            firebase_uid: senderID,
             username: user?.username,
             email: user?.email,
             phone_number: user?.phone_number,
