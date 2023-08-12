@@ -10,24 +10,12 @@ const ListItem = ({
   is_typing,
   who_is_typing_id,
 }) => {
-  console.log({ firebase_uid });
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector(({ auth }) => auth?.user);
   const query = new URLSearchParams(location?.search);
-  const receiverID = query
-    .get("chat_id")
-    ?.split("_")
-    ?.filter((id) => id !== user?.firebase_uid)
-    ?.at(0);
   const isActive = query.get("chat_id")?.includes(firebase_uid);
   const chatID = generateChatId(user?.firebase_uid, firebase_uid);
-
-  const handleTypingStatus = (chat) => {
-    return receiverID === chat?.uid;
-  };
-
-  console.log({ is_typing });
 
   return (
     <li

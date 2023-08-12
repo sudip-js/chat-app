@@ -1,8 +1,44 @@
-import React, { useRef, useState } from "react";
-import { ClearIcon } from "../../../../../../resources/icons";
-import TestVideo from "../../../../../../resources/videos/test-video.mp4";
+import React, { useState } from "react";
+import { ClearIcon, SendIcon } from "../../../../../../resources/icons";
+import { useUploadDataToFirebase } from "../../../../../../hooks/chats";
+import { Spinner } from "react-bootstrap";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../../../../../firebase/firebase";
+import { forwardRef } from "react";
 
-const PreviewFile = ({ attachments, setChatInputState }) => {
+const PreviewFile = forwardRef(({ attachments, setChatInputState }, ref) => {
+  const { onSubmit } = useUploadDataToFirebase();
+  const [isLoading, setIsLoading] = useState(false);
+  const handleSendAttachments = async () => {
+    try {
+      if (Array.isArray(attachments) && attachments.length) {
+        setIsLoading(true);
+        onAuthStateChanged(auth, async (userResponse) => {
+          if (userResponse) {
+            for (let file of attachments) {
+              await onSubmit({ file });
+            }
+          }
+          if (ref?.current?.value) {
+            ref.current.value = null;
+          }
+          setIsLoading(false);
+          setChatInputState((prev) => ({
+            ...prev,
+            isShowAttachmentsModal: false,
+            attachments: [],
+          }));
+        });
+      }
+    } catch (error) {
+      setIsLoading(false);
+      setChatInputState((prev) => ({
+        ...prev,
+        isShowAttachmentsModal: false,
+        attachments: [],
+      }));
+    }
+  };
   return (
     <div className="container">
       <div className="row row-cols-2">
@@ -23,6 +59,7 @@ const PreviewFile = ({ attachments, setChatInputState }) => {
                     index,
                     attachments,
                     setChatInputState,
+                    isLoading,
                   }}
                 />
               </div>
@@ -32,13 +69,32 @@ const PreviewFile = ({ attachments, setChatInputState }) => {
           <span>No attachment are found!</span>
         )}
       </div>
+      <button
+        type="button"
+        className="btn btn-success w-100"
+        onClick={handleSendAttachments}
+      >
+        {isLoading ? (
+          <Spinner size="sm" />
+        ) : (
+          <span>
+            Send <SendIcon className="extra-large-font" />
+          </span>
+        )}
+      </button>
     </div>
   );
-};
+});
 
 export default PreviewFile;
 
-const Attachments = ({ file, index, attachments, setChatInputState }) => {
+const Attachments = ({
+  file,
+  index,
+  attachments,
+  setChatInputState,
+  isLoading,
+}) => {
   const [state, setState] = useState({
     imagePreviewURL: null,
   });
@@ -57,20 +113,21 @@ const Attachments = ({ file, index, attachments, setChatInputState }) => {
   };
 
   const closeButton = () => (
-    <span
+    <button
       style={{
         position: "absolute",
         top: "10px",
         right: "9px",
         background: "white",
         padding: "10px",
-        color: "black",
-        cursor: "pointer",
+        color: "red",
       }}
+      className="btn"
       onClick={() => removeAttachments({ index })}
+      disabled={isLoading}
     >
       <ClearIcon className="extra-large-font" />
-    </span>
+    </button>
   );
   if (!file) return;
   if (file.type.includes("image")) {

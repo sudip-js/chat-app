@@ -101,7 +101,6 @@ const ChatMessagesList = ({ handleOpenModal = () => null }) => {
             <GrowSpinner />
           ) : data?.length ? (
             data.map((user) => {
-              console.log({ user });
               return (
                 <ListItem
                   key={user?.firebase_uid}

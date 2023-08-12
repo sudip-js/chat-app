@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Timestamp, doc, setDoc, updateDoc } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
 import { useSelector } from "react-redux";
-import { auth, db, storage } from "../../../../../../firebase/firebase";
+import { db } from "../../../../../../firebase/firebase";
 import { useGetChatID } from "../../../../../../hooks";
 import {
   ClearIcon,
@@ -13,8 +13,6 @@ import Modal from "../../../../../../components/misc/Modal";
 import Picker from "emoji-picker-react";
 import { insertAtCursor } from "../../../../../../utils";
 import PreviewFile from "../preview-file";
-import { onAuthStateChanged } from "firebase/auth";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { GrowSpinner } from "../../../../../../components";
 import { AudioRecording } from "../recording";
 
@@ -93,80 +91,6 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
     ref.focus();
   };
 
-  const handleUploadMedia = ({ file, message }) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const currentTime = Timestamp.now();
-        const messageID = uuidv4();
-        const senderUserRef = doc(db, `users-chats/${senderID}/chats`, chatID);
-        const receiverUserRef = doc(
-          db,
-          `users-chats/${receiverID}/chats`,
-          chatID
-        );
-        const senderUserMsgRef = doc(
-          db,
-          `users-chats/${senderID}/chats/${chatID}/messages`,
-          messageID
-        );
-        const receiverUserMsgRef = doc(
-          db,
-          `users-chats/${receiverID}/chats/${chatID}/messages`,
-          messageID
-        );
-
-        const storageRef = ref(storage, `media/${chatID}/${messageID}`);
-        const response = await uploadBytes(storageRef, file, {
-          contentType: file?.type ?? "",
-        });
-        const url = await getDownloadURL(
-          ref(storage, response?.metadata?.fullPath)
-        );
-        await setDoc(senderUserMsgRef, {
-          id: messageID,
-          message: url,
-          created_at: currentTime,
-          sender_id: senderID,
-          sender_email: user?.email,
-          type: response?.metadata?.contentType,
-          file_ame: file?.name ?? "",
-          is_edit: false,
-        });
-        await setDoc(receiverUserMsgRef, {
-          id: messageID,
-          message: url,
-          created_at: currentTime,
-          sender_id: senderID,
-          sender_email: user?.email,
-          type: response?.metadata?.contentType,
-          file_ame: file?.name ?? "",
-          is_edit: false,
-        });
-        await updateDoc(senderUserRef, {
-          last_info: {
-            time: Timestamp.now(),
-            last_message: message,
-            type: response?.metadata?.contentType,
-          },
-          should_notify: true,
-          send_by: senderID,
-        });
-        await updateDoc(receiverUserRef, {
-          last_info: {
-            time: Timestamp.now(),
-            last_message: message,
-            type: response?.metadata?.contentType,
-          },
-          should_notify: true,
-          send_by: senderID,
-        });
-        resolve();
-      } catch (error) {
-        reject(new Error(error));
-      }
-    });
-  };
-
   const handleSendMessage = async () => {
     const currentTime = Timestamp.now();
     let tempMessage = message;
@@ -180,45 +104,6 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
       isEditMessageID: "",
     });
     try {
-      if (Array.isArray(attachments) && attachments.length) {
-        handleState({
-          isLoadingAttachments: true,
-        });
-
-        onAuthStateChanged(auth, async (userResponse) => {
-          if (userResponse) {
-            for (let file of attachments) {
-              await handleUploadMedia({ file, message });
-            }
-          }
-          if (fileInputRef?.current?.value) {
-            fileInputRef.current.value = null;
-          }
-          handleState({
-            isLoadingAttachments: false,
-            attachments: [],
-          });
-        });
-      }
-      if (Array.isArray(audio) && audio.length) {
-        handleState({
-          isLoadingAudioRecord: true,
-        });
-
-        onAuthStateChanged(auth, async (userResponse) => {
-          if (userResponse) {
-            for (let file of audio) {
-              await handleUploadMedia({ file, message });
-            }
-          }
-          handleState({
-            isLoadingAudioRecord: false,
-            isShowAudioRecordModal: false,
-            audio: [],
-          });
-        });
-      }
-
       if (!tempMessage) return;
       if (tempIsEditMessage) {
         const senderUserMsgEditRef = doc(
@@ -311,7 +196,6 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
   const handleKeyDown = (e) => e.key === "Enter" && handleSendMessage();
 
   const handleDocUpdate = async (val, id, name) => {
-    console.log({ receiverID, name });
     try {
       const myTypingRef = doc(db, `users-chats/${receiverID}/chats`, chatID);
       await updateDoc(myTypingRef, {
@@ -342,8 +226,6 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
       handleDocUpdate(false, "", "");
     }
   }, [isTyping]);
-
-  console.log({ audio });
 
   return (
     <>
@@ -511,6 +393,7 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
             attachments,
             setChatInputState,
           }}
+          ref={fileInputRef}
         />
       </Modal>
       <Modal
