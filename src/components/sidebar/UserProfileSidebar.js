@@ -1,6 +1,38 @@
 import React from "react";
+import { useGetChatID } from "../../hooks";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase/firebase";
+import { useState } from "react";
+import { useEffect } from "react";
+import moment from "moment/moment";
 
 const UserProfileSidebar = () => {
+  const [data, setData] = useState(null);
+  const { receiverID } = useGetChatID();
+  useEffect(() => {
+    if (!receiverID) return;
+    const docRef = doc(db, `users/${receiverID}`);
+    const unsubscribe = onSnapshot(
+      docRef,
+      (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const res = docSnapshot.data();
+          if (res) {
+            setData(res);
+          }
+        } else {
+          console.error("Document not found in Firestore.");
+        }
+      },
+      (error) => {
+        console.error("Error getting real-time updates:", error);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [receiverID]);
   return (
     <div className="user-profile-sidebar">
       <div className="px-3 px-lg-4 pt-3 pt-lg-4">
@@ -14,13 +46,15 @@ const UserProfileSidebar = () => {
       <div className="text-center p-4 border-bottom">
         <div className="mb-4">
           <img
-            src="assets/images/users/avatar-4.jpg"
+            src={data?.photo_url ?? ""}
             className="rounded-circle avatar-lg img-thumbnail"
             alt=""
           />
         </div>
 
-        <h5 className="font-size-16 mb-1 text-truncate">Doris Brown</h5>
+        <h5 className="font-size-16 mb-1 text-truncate">
+          {data?.username ?? ""}
+        </h5>
         <p className="text-muted text-truncate mb-1">
           <i className="ri-record-circle-fill font-size-10 text-success me-1 ms-0"></i>{" "}
           Active
@@ -30,13 +64,6 @@ const UserProfileSidebar = () => {
 
       {/* <!-- Start user-profile-desc --> */}
       <div className="p-4 user-profile-desc" data-simplebar>
-        <div className="text-muted">
-          <p className="mb-4">
-            If several languages coalesce, the grammar of the resulting language
-            is more simple and regular than that of the individual.
-          </p>
-        </div>
-
         <div className="accordion" id="myprofile">
           <div className="accordion-item card border mb-2">
             <div className="accordion-header" id="about3">
@@ -62,24 +89,42 @@ const UserProfileSidebar = () => {
             >
               <div className="accordion-body">
                 <div>
-                  <p className="text-muted mb-1">Name</p>
-                  <h5 className="font-size-14">Doris Brown</h5>
+                  <p className="text-muted mb-1">Username</p>
+                  <h5 className="font-size-14">{data?.username}</h5>
                 </div>
 
                 <div className="mt-4">
                   <p className="text-muted mb-1">Email</p>
-                  <h5 className="font-size-14">adc@123.com</h5>
+                  <h5 className="font-size-14">{data?.email}</h5>
                 </div>
 
                 <div className="mt-4">
-                  <p className="text-muted mb-1">Time</p>
-                  <h5 className="font-size-14">11:40 AM</h5>
+                  <p className="text-muted mb-1">Account Created At</p>
+                  <h5 className="font-size-14">
+                    {moment
+                      .utc(data?.create_at?.seconds * 1000)
+                      .format("MMM DD, YYYY")}
+                  </h5>
                 </div>
 
-                <div className="mt-4">
-                  <p className="text-muted mb-1">Location</p>
-                  <h5 className="font-size-14 mb-0">California, USA</h5>
-                </div>
+                {data?.phone_number && (
+                  <div className="mt-4">
+                    <p className="text-muted mb-1">Phone Number</p>
+                    <h5 className="font-size-14">{data?.phone_number}</h5>
+                  </div>
+                )}
+                {data?.pronunciation_name && (
+                  <div className="mt-4">
+                    <p className="text-muted mb-1">Pronunciation Name</p>
+                    <h5 className="font-size-14">{data?.pronunciation_name}</h5>
+                  </div>
+                )}
+                {data?.away_status && (
+                  <div className="mt-4">
+                    <p className="text-muted mb-1">Away Status</p>
+                    <h5 className="font-size-14">{data?.away_status}</h5>
+                  </div>
+                )}
               </div>
             </div>
           </div>

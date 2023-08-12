@@ -9,6 +9,7 @@ export { BiUser as UserIcon } from "react-icons/bi";
 export {
   BsTelephoneFill as PhoneIcon,
   BsEmojiLaughing as EmojiIcon,
+  BsRecordBtnFill as RecordIcon,
 } from "react-icons/bs";
 export { FiLock as PasswordIcon } from "react-icons/fi";
 export { RiSendPlaneFill as SendIcon } from "react-icons/ri";

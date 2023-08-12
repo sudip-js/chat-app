@@ -21,12 +21,13 @@ const initialState = {
   recordingMinutes: 0,
   recordingSeconds: 0,
   initRecording: false,
+  initRecordingVideo: false,
   mediaStream: null,
   mediaRecorder: null,
   audio: [],
   isShowVideoRecordModal: false,
-  video: [],
   isTyping: false,
+  videoMediaStream: null,
 };
 const Messages = () => {
   const { data } = useFetchData({

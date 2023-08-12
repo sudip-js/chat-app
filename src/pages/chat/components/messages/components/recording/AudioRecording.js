@@ -69,80 +69,78 @@ const AudioRecording = ({
   };
 
   return (
-    <div>
-      <div className="d-flex flex-column justify-content-center gap-2">
-        {initRecording ? (
-          <>
-            <div className="d-flex justify-content-center align-items-center gap-2">
-              <p className="mb-0 extra-large-font">Recording...</p>
-              <div className="">
-                <span>{formatMinutes(recordingMinutes)}</span>
-                <span>:</span>
-                <span>{formatSeconds(recordingSeconds)}</span>
-              </div>
+    <div className="d-flex flex-column justify-content-center gap-2">
+      {initRecording ? (
+        <>
+          <div className="d-flex justify-content-center align-items-center gap-2">
+            <p className="mb-0 extra-large-font">Recording...</p>
+            <div className="">
+              <span>{formatMinutes(recordingMinutes)}</span>
+              <span>:</span>
+              <span>{formatSeconds(recordingSeconds)}</span>
             </div>
-            <div className="d-flex justify-content-center align-items-center gap-2">
-              <button
-                onClick={handleSaveRecording}
-                type="button"
-                className="btn btn-primary"
-              >
-                <CheckIcon className="extra-large-font" />
-              </button>
-              <button
-                onClick={handleCancelRecording}
-                type="button"
-                className="btn btn-danger"
-              >
-                <ClearIcon className="extra-large-font" />
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
+          </div>
+          <div className="d-flex justify-content-center align-items-center gap-2">
             <button
-              onClick={handleStartRecording}
+              onClick={handleSaveRecording}
               type="button"
               className="btn btn-primary"
             >
-              Start Recording
+              <CheckIcon className="extra-large-font" />
             </button>
-            {Array.isArray(audio) && audio.length
-              ? audio.map((blob, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="d-flex justify-content-center align-items-center gap-2"
+            <button
+              onClick={handleCancelRecording}
+              type="button"
+              className="btn btn-danger"
+            >
+              <ClearIcon className="extra-large-font" />
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <button
+            onClick={handleStartRecording}
+            type="button"
+            className="btn btn-primary"
+          >
+            Start Recording
+          </button>
+          {Array.isArray(audio) && audio.length
+            ? audio.map((blob, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="d-flex justify-content-center align-items-center gap-2"
+                  >
+                    <audio
+                      controls
+                      src={window?.URL?.createObjectURL(blob)}
+                    ></audio>
+                    <button
+                      onClick={() => handleRemoveRecording({ index })}
+                      type="button"
+                      className="btn btn-danger"
                     >
-                      <audio
-                        controls
-                        src={window?.URL?.createObjectURL(blob)}
-                      ></audio>
-                      <button
-                        onClick={() => handleRemoveRecording({ index })}
-                        type="button"
-                        className="btn btn-danger"
-                      >
-                        <ClearIcon className="extra-large-font" />
-                      </button>
-                      <button
-                        onClick={handleSendAudio}
-                        type="button"
-                        className="btn btn-success"
-                      >
-                        {isLoading ? (
-                          <Spinner size="sm" />
-                        ) : (
-                          <SendIcon className="extra-large-font" />
-                        )}
-                      </button>
-                    </div>
-                  );
-                })
-              : null}
-          </>
-        )}
-      </div>
+                      <ClearIcon className="extra-large-font" />
+                    </button>
+                    <button
+                      onClick={handleSendAudio}
+                      type="button"
+                      className="btn btn-success"
+                    >
+                      {isLoading ? (
+                        <Spinner size="sm" />
+                      ) : (
+                        <SendIcon className="extra-large-font" />
+                      )}
+                    </button>
+                  </div>
+                );
+              })
+            : null}
+        </>
+      )}
     </div>
   );
 };

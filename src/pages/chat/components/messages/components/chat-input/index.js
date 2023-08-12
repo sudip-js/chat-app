@@ -14,7 +14,7 @@ import Picker from "emoji-picker-react";
 import { insertAtCursor } from "../../../../../../utils";
 import PreviewFile from "../preview-file";
 import { GrowSpinner } from "../../../../../../components";
-import { AudioRecording } from "../recording";
+import { AudioRecording, VideoRecording } from "../recording";
 
 const audioRecordingInitialState = {
   recordingMinutes: 0,
@@ -40,8 +40,10 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
     isShowAttachmentsModal,
     isLoadingAttachments,
     isShowAudioRecordModal,
+    isShowVideoRecordModal,
     isLoadingAudioRecord,
     audio,
+    video,
     isTyping,
   } = chatInputState;
   const handleState = (newState) => {
@@ -187,9 +189,14 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
     }
   };
 
-  const handleRecordAudio = () => {
+  const handleCloseRecordAudio = () => {
     handleState({
       isShowAudioRecordModal: false,
+    });
+  };
+  const handleCloseRecordVideo = () => {
+    handleState({
+      isShowVideoRecordModal: false,
     });
   };
 
@@ -401,12 +408,32 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
           show: isShowAudioRecordModal,
           title: "Record Audio",
           submitText: "Upload",
-          hide: handleRecordAudio,
+          hide: handleCloseRecordAudio,
           isLoading: isLoadingAudioRecord,
           isDisabled: !Boolean(audio?.length),
         }}
       >
         <AudioRecording
+          {...{
+            chatInputState,
+            setChatInputState,
+            audioRecordingInitialState,
+          }}
+        />
+      </Modal>
+      <Modal
+        {...{
+          show: isShowVideoRecordModal,
+          title: "Record Video",
+          submitText: "Upload",
+          hide: handleCloseRecordVideo,
+          isDisabled: !Boolean(video?.length),
+          extraParams: {
+            size: "lg",
+          },
+        }}
+      >
+        <VideoRecording
           {...{
             chatInputState,
             setChatInputState,

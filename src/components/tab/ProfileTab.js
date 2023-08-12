@@ -16,6 +16,7 @@ import { db, storage } from "../../firebase/firebase";
 import { TextInput } from "../form";
 import { PROFILE_CONSTANTS } from "../../constants";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useGetChatID } from "../../hooks";
 
 const initialState = {
   isOpenEditModal: null,
@@ -23,6 +24,7 @@ const initialState = {
 };
 
 const ProfileTab = () => {
+  const { chatID, receiverID } = useGetChatID();
   const user = useSelector(({ auth }) => auth?.user);
   const [state, setState] = useState(initialState);
   const { isOpenEditModal, isLoading } = state;
@@ -50,6 +52,11 @@ const ProfileTab = () => {
     });
     try {
       const userRef = doc(db, `users/${user?.firebase_uid}`);
+      const userChatRef = doc(db, `users-chats/${user?.firebase_uid}`);
+      const userChatMessageRef = doc(
+        db,
+        `users-chats/${receiverID}/chats/${chatID}`
+      );
       if (isEditProfile) {
         const file = data?.photo_url;
         let url = null;
@@ -69,14 +76,27 @@ const ProfileTab = () => {
           pronunciation_name: data?.pronunciation_name ?? null,
           photo_url: url ?? null,
         });
+        await updateDoc(userChatRef, {
+          pronunciation_name: data?.pronunciation_name ?? null,
+          photo_url: url ?? null,
+        });
+        await updateDoc(userChatMessageRef, {
+          photo_url: url ?? null,
+        });
       }
       if (isEditContact) {
         await updateDoc(userRef, {
           phone_number: data?.phone ?? null,
         });
+        await updateDoc(userChatRef, {
+          phone_number: data?.phone ?? null,
+        });
       }
       if (isSetStatus) {
         await updateDoc(userRef, {
+          away_status: data?.away_status ?? null,
+        });
+        await updateDoc(userChatRef, {
           away_status: data?.away_status ?? null,
         });
       }

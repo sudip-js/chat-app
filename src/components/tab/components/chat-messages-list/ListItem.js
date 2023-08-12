@@ -42,12 +42,12 @@ const ListItem = ({
             {/* {is_typing &&
             handleTypingStatus(firebase_uid) &&
             who_is_typing_id !== user.firebase_uid ? (
-              <p class="chat-user-message text-truncate mb-0">
+              <p className="chat-user-message text-truncate mb-0">
                 typing
-                <span class="animate-typing">
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                  <span class="dot"></span>
+                <span className="animate-typing">
+                  <span className="dot"></span>
+                  <span className="dot"></span>
+                  <span className="dot"></span>
                 </span>
               </p>
             ) : (
@@ -56,12 +56,12 @@ const ListItem = ({
               </p>
             )} */}
             {is_typing && who_is_typing_id !== user.firebase_uid ? (
-              <p class="chat-user-message text-truncate mb-0">
+              <p className="chat-user-message text-truncate mb-0">
                 typing
-                <span class="animate-typing">
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                  <span class="dot"></span>
+                <span className="animate-typing">
+                  <span className="dot"></span>
+                  <span className="dot"></span>
+                  <span className="dot"></span>
                 </span>
               </p>
             ) : (

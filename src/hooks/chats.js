@@ -127,7 +127,7 @@ export const useUploadDataToFirebase = () => {
           sender_id: senderID,
           sender_email: user?.email,
           type: response?.metadata?.contentType,
-          file_ame: file?.name ?? "",
+          file_name: file?.name ?? "",
           is_edit: false,
         });
         await setDoc(receiverUserMsgRef, {
@@ -137,7 +137,7 @@ export const useUploadDataToFirebase = () => {
           sender_id: senderID,
           sender_email: user?.email,
           type: response?.metadata?.contentType,
-          file_ame: file?.name ?? "",
+          file_name: file?.name ?? "",
           is_edit: false,
         });
         await updateDoc(senderUserRef, {
