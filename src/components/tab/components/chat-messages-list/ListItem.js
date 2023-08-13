@@ -74,22 +74,6 @@ const ListItem = ({
           <div className="flex-grow-1 overflow-hidden">
             <h5 className="text-truncate font-size-15 mb-1">{username}</h5>
 
-            {/* {is_typing &&
-            handleTypingStatus(firebase_uid) &&
-            who_is_typing_id !== user.firebase_uid ? (
-              <p className="chat-user-message text-truncate mb-0">
-                typing
-                <span className="animate-typing">
-                  <span className="dot"></span>
-                  <span className="dot"></span>
-                  <span className="dot"></span>
-                </span>
-              </p>
-            ) : (
-              <p className="chat-user-message text-truncate mb-0">
-                Last messages....
-              </p>
-            )} */}
             {is_typing && who_is_typing_id !== user.firebase_uid ? (
               <p className="chat-user-message text-truncate mb-0">
                 typing

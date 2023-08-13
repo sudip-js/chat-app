@@ -2,11 +2,21 @@ import React from "react";
 import { UserIcon } from "../../../../../../resources/icons";
 import { usePresenceStatus } from "../../../../../../hooks";
 import Avatar from "../../../../../../resources/images/avatar-profile.png";
+import { useSelector } from "react-redux";
 
 const ChatTopBar = ({ selectedUser = null }) => {
   const { presenceData } = usePresenceStatus({
     userID: selectedUser?.firebase_uid,
   });
+  const { typingStatus, user } = useSelector(({ chat, auth }) => {
+    return {
+      typingStatus: chat?.typingStatus,
+      firebase_uid: auth?.user,
+    };
+  });
+  const getTypingStatus = typingStatus?.find(
+    (res) => res?.firebaseUid === selectedUser?.firebase_uid
+  );
 
   return (
     <div className="p-3 p-lg-4 border-bottom user-chat-topbar">
@@ -42,11 +52,23 @@ const ChatTopBar = ({ selectedUser = null }) => {
               </div>
             </div>
             <div className="flex-grow-1 overflow-hidden">
-              <h5 className="font-size-16 mb-0 text-truncate">
-                <a href="#" className="text-reset user-profile-show">
-                  {selectedUser?.username ?? ""}
-                </a>{" "}
-              </h5>
+              {getTypingStatus?.isTyping &&
+              getTypingStatus?.whoIsTypingId !== user?.firebase_uid ? (
+                <p className="chat-user-message text-truncate mb-0">
+                  typing
+                  <span className="animate-typing">
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                  </span>
+                </p>
+              ) : (
+                <h5 className="font-size-16 mb-0 text-truncate">
+                  <a href="#" className="text-reset user-profile-show">
+                    {selectedUser?.username ?? ""}
+                  </a>{" "}
+                </h5>
+              )}
             </div>
           </div>
         </div>

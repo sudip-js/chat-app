@@ -3,20 +3,20 @@ import ListItem from "./ListItem";
 import { useGetChatID } from "../../../../hooks";
 import { GrowSpinner } from "../../../spinner";
 import { PlusIcon } from "../../../../resources/icons";
-import { collection, doc, onSnapshot, query } from "firebase/firestore";
+import { collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "../../../../firebase/firebase";
+import { useDispatch } from "react-redux";
+import { setTypingStatus } from "../../../../redux/slices/chatSlice";
 
 const initialState = {
   isLoading: false,
   data: [],
-  isTyping: false,
-  whoIsTypingId: null,
 };
 
 const ChatMessagesList = ({ handleOpenModal = () => null }) => {
-  const { user, receiverID, chatID } = useGetChatID();
+  const dispatch = useDispatch();
+  const { user } = useGetChatID();
   const [state, setState] = useState(initialState);
-  const { isTyping, whoIsTypingId } = state;
   const { isLoading, data } = state;
 
   const handleState = (newState) => {
@@ -37,13 +37,22 @@ const ChatMessagesList = ({ handleOpenModal = () => null }) => {
       const unsubscribe = onSnapshot(qq, (querySnapshot) => {
         if (!querySnapshot.empty) {
           let chats = [];
+          let typingStatus = [];
           querySnapshot.forEach((doc) => {
             chats.push(doc.data());
+            typingStatus.push({
+              isTyping: doc?.data()?.is_typing,
+              whoIsTypingId: doc?.data()?.who_is_typing_id,
+              whoIsTypingName: doc?.data()?.who_is_typing_name,
+              firebaseUid: doc?.data()?.firebase_uid,
+            });
           });
+
           handleState({
             isLoading: false,
             data: [...chats],
           });
+          dispatch(setTypingStatus([...typingStatus]));
         } else {
           handleState({
             isLoading: false,
@@ -64,28 +73,6 @@ const ChatMessagesList = ({ handleOpenModal = () => null }) => {
     }
   }, []);
 
-  useEffect(() => {
-    try {
-      if (receiverID) {
-        const unsubscribe = onSnapshot(
-          doc(db, `users-chats/${user.firebase_uid}/chat`, chatID),
-          (doc) => {
-            if (doc.exists) {
-              handleState({
-                isTyping: doc.data()?.is_typing,
-                whoIsTypingId: doc.data()?.who_is_typing_id,
-              });
-            }
-          }
-        );
-        return () => {
-          unsubscribe();
-        };
-      }
-    } catch (error) {
-      console.error({ error });
-    }
-  }, [receiverID]);
   return (
     <div>
       <div className="d-flex align-items-center mb-3 px-3 justify-content-between">
@@ -106,8 +93,6 @@ const ChatMessagesList = ({ handleOpenModal = () => null }) => {
                   key={user?.firebase_uid}
                   {...{
                     ...user,
-                    isTyping,
-                    whoIsTypingId,
                   }}
                 />
               );
