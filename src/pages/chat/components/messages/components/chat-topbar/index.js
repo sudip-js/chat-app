@@ -8,8 +8,6 @@ const ChatTopBar = ({ selectedUser = null }) => {
     userID: selectedUser?.firebase_uid,
   });
 
-  console.log({ url: selectedUser?.photo_url });
-
   return (
     <div className="p-3 p-lg-4 border-bottom user-chat-topbar">
       <div className="row align-items-center">
@@ -37,7 +35,6 @@ const ChatTopBar = ({ selectedUser = null }) => {
                     objectFit: "cover",
                   }}
                   onError={(e) => {
-                    console.log("err");
                     e.target.style.display = "none";
                   }}
                 />

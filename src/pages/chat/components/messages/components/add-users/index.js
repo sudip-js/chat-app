@@ -171,7 +171,6 @@ const AddUser = () => {
           <GrowSpinner />
         ) : data?.length ? (
           data.map((user) => {
-            console.log({ user });
             const { firebase_uid, username, photo_url, online } = user;
             return (
               <li key={firebase_uid}>
