@@ -1,12 +1,15 @@
-import { signOut } from "firebase/auth";
 import React from "react";
 import swal from "sweetalert";
 import { notify } from "../../helpers";
-import { auth } from "../../firebase/firebase";
 import { useSelector } from "react-redux";
+import { usePresence } from "../../hooks";
+import Avatar from "../../resources/images/avatar-profile.png";
+import { LogoIcon } from "../../resources/icons";
+import { Link } from "react-router-dom";
 
 const SidebarMenu = () => {
   const user = useSelector(({ auth }) => auth?.user);
+  const { logOut } = usePresence();
   const handleLogout = () => {
     try {
       swal({
@@ -16,7 +19,7 @@ const SidebarMenu = () => {
         dangerMode: true,
       }).then(async (willDelete) => {
         if (willDelete) {
-          await signOut(auth);
+          await logOut();
         }
       });
     } catch (error) {
@@ -29,23 +32,17 @@ const SidebarMenu = () => {
   };
   return (
     <div className="side-menu flex-lg-column me-lg-1 ms-lg-0">
-      {/* <!-- LOGO --> */}
       <div className="navbar-brand-box">
-        <a href="index.html" className="logo logo-dark">
-          <span className="logo-sm">
-            <img src="assets/images/logo.svg" alt="" height="30" />
-          </span>
-        </a>
-
-        <a href="index.html" className="logo logo-light">
-          <span className="logo-sm">
-            <img src="assets/images/logo.svg" alt="" height="30" />
-          </span>
-        </a>
+        <Link to="/" className="logo logo-dark">
+          <LogoIcon
+            style={{
+              fontSize: "2.5rem",
+              color: "#fafafa",
+            }}
+          />
+        </Link>
       </div>
-      {/* <!-- end navbar-brand-box --> */}
 
-      {/* <!-- Start side-menu nav --> */}
       <div className="flex-lg-column my-auto">
         <ul
           className="nav nav-pills side-menu-nav justify-content-center"
@@ -110,8 +107,8 @@ const SidebarMenu = () => {
               aria-expanded="false"
             >
               <img
-                src={user?.photo_url}
-                alt=""
+                src={user?.photo_url ?? Avatar}
+                alt="Avatar"
                 className="profile-user rounded-circle"
               />
             </a>
@@ -132,7 +129,6 @@ const SidebarMenu = () => {
           </li>
         </ul>
       </div>
-      {/* <!-- end side-menu nav --> */}
 
       <div className="flex-lg-column d-none d-lg-block">
         <ul className="nav side-menu-nav justify-content-center">
@@ -159,8 +155,8 @@ const SidebarMenu = () => {
               aria-expanded="false"
             >
               <img
-                src={user?.photo_url}
-                alt=""
+                src={user?.photo_url ?? Avatar}
+                alt="Avatar"
                 className="profile-user rounded-circle"
               />
             </a>
@@ -181,7 +177,6 @@ const SidebarMenu = () => {
           </li>
         </ul>
       </div>
-      {/* <!-- Side menu user --> */}
     </div>
   );
 };

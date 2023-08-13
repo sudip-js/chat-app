@@ -19,7 +19,7 @@ const SettingsTab = () => {
             <img
               src="assets/images/users/avatar-1.jpg"
               className="rounded-circle avatar-lg img-thumbnail"
-              alt=""
+              alt="Avatar"
             />
             <button
               type="button"

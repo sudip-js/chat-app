@@ -5,6 +5,7 @@ import { db } from "../../firebase/firebase";
 import { useState } from "react";
 import { useEffect } from "react";
 import moment from "moment/moment";
+import Avatar from "../../resources/images/avatar-profile.png";
 
 const UserProfileSidebar = () => {
   const [data, setData] = useState(null);
@@ -46,9 +47,9 @@ const UserProfileSidebar = () => {
       <div className="text-center p-4 border-bottom">
         <div className="mb-4">
           <img
-            src={data?.photo_url ?? ""}
+            src={data?.photo_url ?? Avatar}
             className="rounded-circle avatar-lg img-thumbnail"
-            alt=""
+            alt="Avatar"
           />
         </div>
 

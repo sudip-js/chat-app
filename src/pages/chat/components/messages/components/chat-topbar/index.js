@@ -1,7 +1,15 @@
 import React from "react";
 import { UserIcon } from "../../../../../../resources/icons";
+import { usePresenceStatus } from "../../../../../../hooks";
+import Avatar from "../../../../../../resources/images/avatar-profile.png";
 
 const ChatTopBar = ({ selectedUser = null }) => {
+  const { presenceData } = usePresenceStatus({
+    userID: selectedUser?.firebase_uid,
+  });
+
+  console.log({ url: selectedUser?.photo_url });
+
   return (
     <div className="p-3 p-lg-4 border-bottom user-chat-topbar">
       <div className="row align-items-center">
@@ -16,23 +24,31 @@ const ChatTopBar = ({ selectedUser = null }) => {
               </a>
             </div>
             <div className="me-3 ms-0">
-              <img
-                src={
-                  selectedUser?.photo_url ?? "assets/images/users/avatar-4.jpg"
-                }
-                className="rounded-circle avatar-xs"
-                alt=""
-                style={{
-                  objectFit: "cover",
-                }}
-              />
+              <div
+                className={`chat-user-img align-self-center ms-0 ${
+                  presenceData?.online ? "online" : "offline"
+                }`}
+              >
+                <img
+                  src={selectedUser?.photo_url ?? Avatar}
+                  className="rounded-circle avatar-xs"
+                  alt="Avatar"
+                  style={{
+                    objectFit: "cover",
+                  }}
+                  onError={(e) => {
+                    console.log("err");
+                    e.target.style.display = "none";
+                  }}
+                />
+                <span className="user-status"></span>
+              </div>
             </div>
             <div className="flex-grow-1 overflow-hidden">
               <h5 className="font-size-16 mb-0 text-truncate">
                 <a href="#" className="text-reset user-profile-show">
                   {selectedUser?.username ?? ""}
                 </a>{" "}
-                <i className="ri-record-circle-fill font-size-10 text-success d-inline-block ms-1"></i>
               </h5>
             </div>
           </div>

@@ -13,6 +13,7 @@ export {
 } from "react-icons/bs";
 export { FiLock as PasswordIcon } from "react-icons/fi";
 export { RiSendPlaneFill as SendIcon } from "react-icons/ri";
+export { RxDotFilled as DotIcon } from "react-icons/rx";
 export {
   FcGoogle as GoogleIcon,
   FcEditImage as EditImageIcon,
@@ -23,6 +24,7 @@ export {
   FaMicrophone as MicIcon,
   FaCheck as CheckIcon,
   FaUser as ProfileIcon,
+  FaReddit as LogoIcon,
 } from "react-icons/fa";
 export {
   MdDelete as DeleteIcon,

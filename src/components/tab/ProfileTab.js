@@ -17,6 +17,7 @@ import { TextInput } from "../form";
 import { PROFILE_CONSTANTS } from "../../constants";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useGetChatID } from "../../hooks";
+import Avatar from "../../resources/images/avatar-profile.png";
 
 const initialState = {
   isOpenEditModal: null,
@@ -132,8 +133,8 @@ const ProfileTab = () => {
               <div className="image-container mb-2">
                 <img
                   className="profile-image"
-                  src={user?.photo_url}
-                  alt="Profile Image"
+                  src={user?.photo_url ?? Avatar}
+                  alt="Avatar"
                 />
               </div>
               <div className="d-flex flex-column mb-2 gap-2">

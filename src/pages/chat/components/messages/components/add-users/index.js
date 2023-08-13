@@ -7,6 +7,7 @@ import { serverTimestamp } from "firebase/database";
 import { useNavigate } from "react-router-dom";
 import { useFetchData, useGetChatID } from "../../../../../../hooks";
 import { generateChatId } from "../../../../../../utils";
+import Avatar from "../../../../../../resources/images/avatar-profile.png";
 
 const AddUser = () => {
   const navigate = useNavigate();
@@ -170,18 +171,21 @@ const AddUser = () => {
           <GrowSpinner />
         ) : data?.length ? (
           data.map((user) => {
-            const { firebase_uid, username, photo_url } = user;
+            console.log({ user });
+            const { firebase_uid, username, photo_url, online } = user;
             return (
               <li key={firebase_uid}>
                 <a>
                   <div className="d-flex">
                     <div
-                      className={`chat-user-img online align-self-center me-3 ms-0`}
+                      className={`chat-user-img  align-self-center me-3 ms-0 ${
+                        online ? "online" : "offline"
+                      }`}
                     >
                       <img
-                        src={photo_url ?? "assets/images/users/avatar-8.jpg"}
+                        src={photo_url ?? Avatar}
                         className="rounded-circle avatar-xs"
-                        alt=""
+                        alt="Avatar"
                         style={{
                           objectFit: "cover",
                         }}

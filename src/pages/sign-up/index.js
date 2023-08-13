@@ -100,6 +100,8 @@ const SignUp = () => {
         firebase_uid: uid,
         create_at: serverTimestamp(),
         follow: false,
+        online: true,
+        updated_at: serverTimestamp(),
       };
       await setDoc(docRef, payload);
       dispatch(

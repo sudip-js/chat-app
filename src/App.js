@@ -9,9 +9,11 @@ import { login, logout } from "./redux/slices/authSlice";
 import "./App.css";
 import { doc, onSnapshot } from "firebase/firestore";
 import moment from "moment";
+import { usePresence } from "./hooks";
 
 const App = () => {
   const dispatch = useDispatch();
+  const { userLoading } = usePresence();
   const user = useSelector(({ auth }) => auth?.user);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {

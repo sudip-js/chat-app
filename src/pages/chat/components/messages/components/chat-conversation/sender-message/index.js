@@ -92,11 +92,7 @@ const SenderMessage = (props) => {
     <li className="right">
       <div className="conversation-list">
         <div className="chat-avatar">
-          <img
-            className="image"
-            src={user?.photo_url ?? Avatar}
-            alt="Profile Image"
-          />
+          <img className="image" src={user?.photo_url ?? Avatar} alt="Avatar" />
         </div>
 
         <div className="user-chat-content">

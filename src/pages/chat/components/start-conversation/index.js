@@ -27,6 +27,7 @@ const StartConversation = () => {
           style={{
             width: "100%",
           }}
+          alt="Start Conversation"
         />
       </div>
     </div>

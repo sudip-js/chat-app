@@ -2,6 +2,11 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { generateChatId } from "../../../../utils";
+import { useEffect } from "react";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../../../../firebase/firebase";
+import { useState } from "react";
+import Avatar from "../../../../resources/images/avatar-profile.png";
 
 const ListItem = ({
   username,
@@ -10,12 +15,38 @@ const ListItem = ({
   is_typing,
   who_is_typing_id,
 }) => {
+  const [data, setData] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const user = useSelector(({ auth }) => auth?.user);
   const query = new URLSearchParams(location?.search);
   const isActive = query.get("chat_id")?.includes(firebase_uid);
   const chatID = generateChatId(user?.firebase_uid, firebase_uid);
+
+  useEffect(() => {
+    if (!firebase_uid) return;
+    const docRef = doc(db, `users/${firebase_uid}`);
+    const unsubscribe = onSnapshot(
+      docRef,
+      (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const res = docSnapshot.data();
+          if (res) {
+            setData(res);
+          }
+        } else {
+          console.error("Document not found in Firestore.");
+        }
+      },
+      (error) => {
+        console.error("Error getting real-time updates:", error);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [firebase_uid]);
 
   return (
     <li
@@ -24,11 +55,15 @@ const ListItem = ({
     >
       <a>
         <div className="d-flex">
-          <div className="chat-user-img online align-self-center me-3 ms-0">
+          <div
+            className={`chat-user-img align-self-center me-3 ms-0 ${
+              data?.online ? "online" : "offline"
+            }`}
+          >
             <img
-              src={photo_url ?? "assets/images/users/avatar-2.jpg"}
+              src={photo_url ?? Avatar}
               className="rounded-circle avatar-xs"
-              alt=""
+              alt="Avatar"
               style={{
                 objectFit: "cover",
               }}

@@ -7,6 +7,7 @@ import { deleteDoc, doc } from "firebase/firestore";
 import swal from "sweetalert";
 import { useGetChatID } from "../../../../../../../hooks";
 import RenderMessage from "../common/RenderMessage";
+import Avatar from "../../../../../../../resources/images/avatar-profile.png";
 
 const ReceiverMessage = (props) => {
   const { created_at, id: messageID, is_edit, selectedUser } = props;
@@ -59,10 +60,7 @@ const ReceiverMessage = (props) => {
     <li>
       <div className="conversation-list">
         <div className="chat-avatar">
-          <img
-            src={selectedUser?.photo_url ?? "assets/images/users/avatar-4.jpg"}
-            alt=""
-          />
+          <img src={selectedUser?.photo_url ?? Avatar} alt="Avatar" />
         </div>
 
         <div className="user-chat-content">

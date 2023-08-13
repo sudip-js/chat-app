@@ -147,6 +147,7 @@ const Attachments = ({
             width: "100%",
             height: "15rem",
           }}
+          alt="Preview Image"
         />
         {closeButton()}
       </>

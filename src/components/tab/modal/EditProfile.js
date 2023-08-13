@@ -69,7 +69,7 @@ const EditProfile = ({
               ref={inputFileRef}
               onChange={onchangeFileInput}
             />
-            <img src={profileImage} alt="Image" className="image" />
+            <img src={profileImage} alt="Avatar" className="image" />
             <div
               className="edit-icon"
               onClick={() => inputFileRef?.current?.click()}
