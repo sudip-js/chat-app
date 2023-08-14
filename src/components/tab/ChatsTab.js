@@ -35,7 +35,7 @@ const ChatsTab = () => {
             <div className="mb-4 d-flex align-items-center justify-content-between">
               <h4>Chats</h4>
             </div>
-            <div className="search-box chat-search-box">
+            {/* <div className="search-box chat-search-box">
               <div className="input-group mb-3 rounded-3">
                 <span
                   className="input-group-text text-muted bg-light pe-1 ps-3"
@@ -51,13 +51,13 @@ const ChatsTab = () => {
                   aria-describedby="basic-addon1"
                 />
               </div>
-            </div>
+            </div> */}
             {/* <!-- Search Box--> */}
           </div>
           {/* <!-- .p-4 --> */}
 
           {/* <!-- Start user status --> */}
-          <div className="px-4 pb-4" dir="ltr">
+          {/* <div className="px-4 pb-4" dir="ltr">
             <div className="owl-carousel owl-theme" id="user-status-carousel">
               <div className="item">
                 <a href="#" className="user-status-box">
@@ -141,8 +141,7 @@ const ChatsTab = () => {
                 </a>
               </div>
             </div>
-            {/* <!-- end user status carousel --> */}
-          </div>
+          </div> */}
           {/* <!-- end user status --> */}
 
           <ChatMessagesList

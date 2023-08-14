@@ -19,6 +19,7 @@ const EditContactInformation = ({
   onSubmit = () => null,
   user = null,
   isLoading = null,
+  hide = () => null,
 }) => {
   const isLoadingShow = isLoading === PROFILE_CONSTANTS.CONTACT_INFORMATION;
   const [phoneError, setPhoneError] = useState(null);
@@ -95,7 +96,7 @@ const EditContactInformation = ({
           />
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-danger w-25">
+          <button type="button" className="btn btn-danger w-25" onClick={hide}>
             Close
           </button>
           <button

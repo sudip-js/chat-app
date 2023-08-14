@@ -15,11 +15,10 @@ export const TextInput = forwardRef(
     },
     ref
   ) => {
-    const navigate = useNavigate();
     return (
       <>
         {label && <label className="form-label">{label}</label>}
-        <div className="input-group bg-light-subtle rounded-3  mb-3">
+        <div className="input-group bg-light-subtle rounded-3  mb-0">
           {Icon && (
             <span className="input-group-text text-muted" id="basic-addon5">
               <Icon />
@@ -35,6 +34,7 @@ export const TextInput = forwardRef(
             aria-describedby="basic-addon5"
           />
         </div>
+        {error && <span className="error">{error}</span>}
       </>
     );
   }

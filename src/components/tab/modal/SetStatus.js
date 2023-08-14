@@ -37,6 +37,7 @@ const SetStatus = ({
   onSubmit = () => null,
   user = null,
   isLoading = null,
+  hide = () => null,
 }) => {
   const inputRef = useRef(null);
   const isLoadingShow = isLoading === PROFILE_CONSTANTS.SET_STATUS;
@@ -147,7 +148,7 @@ const SetStatus = ({
         )}
 
         <div className="modal-footer">
-          <button type="button" className="btn btn-danger w-25">
+          <button type="button" className="btn btn-danger w-25" onClick={hide}>
             Close
           </button>
           <button

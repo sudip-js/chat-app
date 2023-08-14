@@ -18,6 +18,7 @@ const EditProfile = ({
   onSubmit = () => null,
   user = null,
   isLoading = null,
+  hide = () => null,
 }) => {
   const userDetails = useSelector(({ auth }) => auth?.user);
   const inputFileRef = useRef(null);
@@ -45,17 +46,21 @@ const EditProfile = ({
     setValue("photo_url", file);
   };
 
+  const handleRemovePhoto = () => {
+    setValue("photo_url", null);
+    setFileBlob(null);
+  };
+
   useEffect(() => {
-    if (user?.pronunciation_name) {
-      setValue("pronunciation_name", user?.pronunciation_name);
-    }
+    if (!user && !Object.keys(user)?.length > 0) return;
+    setValue("pronunciation_name", user?.pronunciation_name);
     return () => {
       setFileBlob(null);
       if (inputFileRef?.current?.value) {
         inputFileRef.current.value = null;
       }
     };
-  }, [user?.pronunciation_name]);
+  }, [user]);
 
   return (
     <>
@@ -70,20 +75,23 @@ const EditProfile = ({
               onChange={onchangeFileInput}
             />
             <img src={profileImage} alt="Avatar" className="image" />
-            <div
-              className="edit-icon"
-              onClick={() => inputFileRef?.current?.click()}
-            >
-              <EditImageIcon className="large-font" />
-            </div>
+            {!isLoading && (
+              <div
+                className="edit-icon"
+                onClick={() => inputFileRef?.current?.click()}
+              >
+                <EditImageIcon className="large-font" />
+              </div>
+            )}
           </div>
           {fileBlob && (
-            <p
-              className="link cursor--pointer my-1"
-              onClick={() => setFileBlob(null)}
+            <button
+              className="btn btn-outline-danger my-2"
+              onClick={handleRemovePhoto}
+              disabled={isLoadingShow}
             >
               Remove Photo
-            </p>
+            </button>
           )}
         </div>
         <div className="mb-3">
@@ -98,6 +106,7 @@ const EditProfile = ({
                   icon: UserIcon,
                   placeholder: "Zoe (pronounced 'zo-ee')",
                   error: errors?.pronunciation_name?.message,
+                  disabled: isLoadingShow,
                 }}
               />
             )}
@@ -105,7 +114,12 @@ const EditProfile = ({
         </div>
 
         <div className="modal-footer">
-          <button type="button" className="btn btn-danger w-25">
+          <button
+            disabled={isLoadingShow}
+            type="button"
+            className="btn btn-danger w-25"
+            onClick={hide}
+          >
             Close
           </button>
           <button

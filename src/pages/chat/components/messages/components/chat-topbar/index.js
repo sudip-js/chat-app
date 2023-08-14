@@ -74,7 +74,7 @@ const ChatTopBar = ({ selectedUser = null }) => {
         </div>
         <div className="col-sm-8 col-4">
           <ul className="list-inline user-chat-nav text-end mb-0">
-            <li className="list-inline-item">
+            {/* <li className="list-inline-item">
               <div className="dropdown">
                 <button
                   className="btn nav-btn dropdown-toggle"
@@ -95,7 +95,7 @@ const ChatTopBar = ({ selectedUser = null }) => {
                   </div>
                 </div>
               </div>
-            </li>
+            </li> */}
 
             <li className="list-inline-item d-none d-lg-inline-block me-2 ms-0">
               <button type="button" className="btn nav-btn user-profile-show">

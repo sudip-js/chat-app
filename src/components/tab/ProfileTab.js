@@ -11,13 +11,14 @@ import {
 import Modal from "../misc/Modal";
 import { useState } from "react";
 import { EditContactInformation, EditProfile, SetStatus } from "./modal";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db, storage } from "../../firebase/firebase";
 import { TextInput } from "../form";
 import { PROFILE_CONSTANTS } from "../../constants";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useGetChatID } from "../../hooks";
 import Avatar from "../../resources/images/avatar-profile.png";
+import { notify } from "../../helpers";
 
 const initialState = {
   isOpenEditModal: null,
@@ -48,24 +49,27 @@ const ProfileTab = () => {
   };
 
   const handleEdit = async (data) => {
+    const userID = user?.firebase_uid;
     handleState({
       isLoading: isOpenEditModal,
     });
     try {
-      const userRef = doc(db, `users/${user?.firebase_uid}`);
-      const userChatRef = doc(db, `users-chats/${user?.firebase_uid}`);
+      const userRef = doc(db, `users/${userID}`);
+      const userChatRef = doc(db, `users-chats/${userID}`);
       const userChatMessageRef = doc(
         db,
         `users-chats/${receiverID}/chats/${chatID}`
       );
+
+      const getUserRefDoc = await getDoc(userRef);
+      const getUserChatRefDoc = await getDoc(userChatRef);
+      const getUserChatMessageRefDoc = await getDoc(userChatMessageRef);
+
       if (isEditProfile) {
         const file = data?.photo_url;
         let url = null;
         if (file) {
-          const storageRef = ref(
-            storage,
-            `profile/${user?.firebase_uid}/${file?.name}`
-          );
+          const storageRef = ref(storage, `profile/${userID}/${file?.name}`);
           const response = await uploadBytes(storageRef, file, {
             contentType: file?.type ?? "",
           });
@@ -73,39 +77,79 @@ const ProfileTab = () => {
             ref(storage, response?.metadata?.fullPath)
           );
         }
-        await updateDoc(userRef, {
-          pronunciation_name: data?.pronunciation_name ?? null,
-          photo_url: url ?? null,
-        });
-        await updateDoc(userChatRef, {
-          pronunciation_name: data?.pronunciation_name ?? null,
-          photo_url: url ?? null,
-        });
-        await updateDoc(userChatMessageRef, {
-          photo_url: url ?? null,
-        });
+        if (getUserRefDoc?.exists()) {
+          await updateDoc(userRef, {
+            pronunciation_name: data?.pronunciation_name ?? null,
+          });
+
+          if (file) {
+            await updateDoc(userRef, {
+              photo_url: url ?? null,
+            });
+          }
+        }
+        if (getUserChatRefDoc?.exists()) {
+          await updateDoc(userChatRef, {
+            pronunciation_name: data?.pronunciation_name ?? null,
+          });
+
+          if (file) {
+            await updateDoc(userChatRef, {
+              photo_url: url ?? null,
+            });
+          }
+        }
+
+        if (getUserChatMessageRefDoc?.exists()) {
+          if (file) {
+            await updateDoc(userChatMessageRef, {
+              photo_url: url ?? null,
+            });
+          }
+        }
       }
       if (isEditContact) {
-        await updateDoc(userRef, {
-          phone_number: data?.phone ?? null,
-        });
-        await updateDoc(userChatRef, {
-          phone_number: data?.phone ?? null,
-        });
+        if (getUserRefDoc?.exists()) {
+          await updateDoc(userRef, {
+            phone_number: data?.phone ?? null,
+          });
+        }
+        if (getUserChatRefDoc?.exists()) {
+          await updateDoc(userChatRef, {
+            phone_number: data?.phone ?? null,
+          });
+        }
       }
       if (isSetStatus) {
-        await updateDoc(userRef, {
-          away_status: data?.away_status ?? null,
-        });
-        await updateDoc(userChatRef, {
-          away_status: data?.away_status ?? null,
-        });
+        if (getUserRefDoc?.exists()) {
+          await updateDoc(userRef, {
+            away_status: data?.away_status ?? null,
+          });
+        }
+        if (getUserChatRefDoc?.exists()) {
+          await updateDoc(userChatRef, {
+            away_status: data?.away_status ?? null,
+          });
+        }
       }
     } catch (error) {
-      console.error({ error });
+      console.error({ error: error?.message });
+      const errorMessage = error?.message?.split(":")?.at(0);
+      notify({
+        message: errorMessage,
+        type: "error",
+      });
     } finally {
       handleState({
         isLoading: null,
+        isOpenEditModal: null,
+      });
+    }
+  };
+
+  const handleCloseModal = () => {
+    if (!isLoading) {
+      handleState({
         isOpenEditModal: null,
       });
     }
@@ -151,7 +195,7 @@ const ProfileTab = () => {
                     onClick={() =>
                       handleEditClick(PROFILE_CONSTANTS.YOUR_PROFILE)
                     }
-                    className="large-font"
+                    className="large-font cursor--pointer"
                   />
                 </div>
                 {!user?.pronunciation_name && (
@@ -169,9 +213,7 @@ const ProfileTab = () => {
                 <p className="mb-0">
                   <OnlineStatus /> Away, notifications snoozed
                 </p>
-                <p className="mb-0">
-                  <ClockIcon /> 12:41 AM local time
-                </p>
+
                 {user?.away_status && (
                   <p className="mb-0">{user.away_status}</p>
                 )}
@@ -192,7 +234,7 @@ const ProfileTab = () => {
                   onClick={() =>
                     handleEditClick(PROFILE_CONSTANTS.CONTACT_INFORMATION)
                   }
-                  className="large-font"
+                  className="large-font cursor--pointer"
                 />
               </div>
               <TextInput
@@ -236,11 +278,7 @@ const ProfileTab = () => {
               : `Set ${isOpenEditModal}`
             : `Edit ${isOpenEditModal ?? ""}`,
           submitText: "Update",
-          hide: () => {
-            handleState({
-              isOpenEditModal: null,
-            });
-          },
+          hide: handleCloseModal,
           extraParams: {
             showFooter: false,
           },
@@ -252,6 +290,7 @@ const ProfileTab = () => {
               onSubmit: handleEdit,
               user,
               isLoading,
+              hide: handleCloseModal,
             }}
           />
         )}
@@ -261,6 +300,7 @@ const ProfileTab = () => {
               onSubmit: handleEdit,
               user,
               isLoading,
+              hide: handleCloseModal,
             }}
           />
         )}
@@ -270,6 +310,7 @@ const ProfileTab = () => {
               onSubmit: handleEdit,
               user,
               isLoading,
+              hide: handleCloseModal,
             }}
           />
         )}

@@ -60,7 +60,11 @@ const ReceiverMessage = (props) => {
     <li>
       <div className="conversation-list">
         <div className="chat-avatar">
-          <img src={selectedUser?.photo_url ?? Avatar} alt="Avatar" />
+          <img
+            src={selectedUser?.photo_url ?? Avatar}
+            alt="Avatar"
+            className="image"
+          />
         </div>
 
         <div className="user-chat-content">
