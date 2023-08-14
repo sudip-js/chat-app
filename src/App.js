@@ -10,6 +10,7 @@ import "./App.css";
 import { doc, onSnapshot } from "firebase/firestore";
 import moment from "moment";
 import { usePresence } from "./hooks";
+import { notify } from "./helpers";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -62,10 +63,18 @@ const App = () => {
             );
           } else {
             console.error("Document not found in Firestore.");
+            notify({
+              message: "Document not found in Firestore.",
+              type: "error",
+            });
           }
         },
         (error) => {
           console.error("Error getting real-time updates:", error);
+          notify({
+            message: error?.message ?? "Something Went Wrong!",
+            type: "error",
+          });
         }
       );
     }

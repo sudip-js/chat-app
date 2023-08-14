@@ -8,6 +8,7 @@ import { auth } from "../../../../../../firebase/firebase";
 import { useUploadDataToFirebase } from "../../../../../../hooks/chats";
 import { Spinner } from "react-bootstrap";
 import moment from "moment/moment";
+import { notify } from "../../../../../../helpers";
 
 const VideoRecording = ({ setChatInputState }) => {
   const { onSubmit } = useUploadDataToFirebase();
@@ -32,6 +33,10 @@ const VideoRecording = ({ setChatInputState }) => {
       recordRTC.startRecording();
     } catch (error) {
       console.error({ error });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
     }
   };
 
@@ -49,6 +54,10 @@ const VideoRecording = ({ setChatInputState }) => {
       }
     } catch (error) {
       console.error({ error });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
     }
   };
   const handleStartCamera = async () => {
@@ -60,8 +69,12 @@ const VideoRecording = ({ setChatInputState }) => {
       });
       setMediaStream(stream);
       videoRef.current.srcObject = stream;
-    } catch (err) {
-      console.error({ err });
+    } catch (error) {
+      console.error({ error });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
     }
   };
   const handleSendVideo = () => {
@@ -85,6 +98,10 @@ const VideoRecording = ({ setChatInputState }) => {
       }
     } catch (error) {
       console.error({ error });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
       setBlob(null);
       setVideoSrc("");
       setIsLoading(false);

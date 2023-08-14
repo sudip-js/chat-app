@@ -15,6 +15,7 @@ import { insertAtCursor } from "../../../../../../utils";
 import PreviewFile from "../preview-file";
 import { GrowSpinner } from "../../../../../../components";
 import { AudioRecording, VideoRecording } from "../recording";
+import { notify } from "../../../../../../helpers";
 
 const audioRecordingInitialState = {
   recordingMinutes: 0,
@@ -186,6 +187,10 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
       }
     } catch (error) {
       console.error({ error });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
     }
   };
 
@@ -212,6 +217,10 @@ const ChatInput = ({ chatInputState, setChatInputState }) => {
       });
     } catch (error) {
       console.error({ error });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
     }
   };
 

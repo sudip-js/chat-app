@@ -8,6 +8,7 @@ import { db } from "../../../../../../../firebase/firebase";
 import { useGetChatID } from "../../../../../../../hooks";
 import RenderMessage from "../common/RenderMessage";
 import Avatar from "../../../../../../../resources/images/avatar-profile.png";
+import { notify } from "../../../../../../../helpers";
 
 const SenderMessage = (props) => {
   const {
@@ -39,6 +40,10 @@ const SenderMessage = (props) => {
       }
     } catch (error) {
       console.error({ error });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
     }
   };
   const handleDeleteMessage = () => {

@@ -14,6 +14,7 @@ import {
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { onDisconnect, onValue, ref, set } from "firebase/database";
 import { Navigate } from "react-router-dom";
+import { notify } from "../helpers";
 
 export const usePresence = () => {
   const [user, setUser] = useState(null);
@@ -45,6 +46,10 @@ export const usePresence = () => {
       localStorage.clear();
       return <Navigate to="/" />;
     } catch (error) {
+      notify({
+        message: error?.message ?? "Something went wrong",
+        type: "error",
+      });
       console.error({ error });
     }
   };

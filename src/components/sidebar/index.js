@@ -26,7 +26,7 @@ const SidebarMenu = () => {
     } catch (error) {
       console.error({ error: error?.message });
       notify({
-        message: error?.message,
+        message: error?.message ?? "Something Went Wrong!",
         type: "error",
       });
     }
@@ -94,7 +94,7 @@ const SidebarMenu = () => {
               <i className="ri-message-3-line"></i>
             </a>
           </li>
-          <li
+          {/* <li
             className="nav-item"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
@@ -109,7 +109,7 @@ const SidebarMenu = () => {
             >
               <i className="ri-group-line"></i>
             </a>
-          </li>
+          </li> */}
 
           <li className="nav-item dropdown profile-user-dropdown d-inline-block d-lg-none">
             <a

@@ -7,6 +7,7 @@ import { collection, onSnapshot, query } from "firebase/firestore";
 import { db } from "../../../../firebase/firebase";
 import { useDispatch } from "react-redux";
 import { setTypingStatus } from "../../../../redux/slices/chatSlice";
+import { notify } from "../../../../helpers";
 
 const initialState = {
   isLoading: false,
@@ -70,6 +71,10 @@ const ChatMessagesList = ({ handleOpenModal = () => null }) => {
         data: [],
       });
       console.error({ error });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
     }
   }, []);
 

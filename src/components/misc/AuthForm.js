@@ -14,7 +14,10 @@ export const AuthFormFooter = ({ title, linkText, link }) => {
   return (
     <>
       <p>
-        {title} <span onClick={() => navigate(link)}>{linkText}</span>{" "}
+        {title}{" "}
+        <span onClick={() => navigate(link)} className="cursor--pointer">
+          {linkText}
+        </span>{" "}
       </p>
       <p>
         By continuing, you agree to ChatBOT's Terms of Service and Privacy

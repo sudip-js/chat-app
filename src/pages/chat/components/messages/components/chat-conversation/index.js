@@ -53,7 +53,7 @@ const ChatConversation = ({ setChatInputState, selectedUser }) => {
       (error) => {
         console.error({ error: error });
         notify({
-          message: "ERROR:Failed to fetch users.Please try again later.",
+          message: error?.message ?? "Something Went Wrong!",
           type: "error",
         });
       }

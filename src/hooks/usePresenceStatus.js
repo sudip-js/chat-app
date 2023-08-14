@@ -2,6 +2,7 @@ import { doc, onSnapshot, serverTimestamp } from "firebase/firestore";
 import { useEffect } from "react";
 import { db } from "../firebase/firebase";
 import { useState } from "react";
+import { notify } from "../helpers";
 
 export const usePresenceStatus = ({ userID }) => {
   const [presenceData, setPresenceData] = useState(null);
@@ -21,10 +22,18 @@ export const usePresenceStatus = ({ userID }) => {
           }
         } else {
           console.error("Document not found in Firestore.");
+          notify({
+            message: "Document not found in Firestore.",
+            type: "error",
+          });
         }
       },
       (error) => {
         console.error("Error getting real-time updates:", error);
+        notify({
+          message: error?.message ?? "Something Went Wrong!",
+          type: "error",
+        });
       }
     );
 

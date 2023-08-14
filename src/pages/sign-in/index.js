@@ -41,7 +41,7 @@ const SignIn = () => {
     if (!result.response) {
       console.error({ errors: result?.error });
       notify({
-        message: result.error,
+        message: result.error ?? "Something Went Wrong!",
         type: "error",
       });
     }
@@ -60,6 +60,10 @@ const SignIn = () => {
         type: "error",
       });
       console.error({ error: error?.message });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
     } finally {
       setState((prevState) => ({
         ...prevState,

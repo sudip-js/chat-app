@@ -8,6 +8,7 @@ import { db } from "../../../../firebase/firebase";
 import NoChatFoundImage from "../../../../resources/images/no-chat-found.svg";
 import { Spinner } from "react-bootstrap";
 import { GrowSpinner } from "../../../../components";
+import { notify } from "../../../../helpers";
 
 const initialState = {
   message: "",
@@ -91,6 +92,11 @@ const Messages = () => {
       }
     } catch (error) {
       console.error({ error });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
+
       handleState({
         isChatExist: false,
         isChatExistLoader: false,

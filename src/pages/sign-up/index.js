@@ -55,7 +55,7 @@ const SignUp = () => {
     if (!result.response) {
       console.error({ errors: result?.error });
       notify({
-        message: result.error,
+        message: error?.message ?? "Something Went Wrong!",
         type: "error",
       });
     }
@@ -235,7 +235,7 @@ const SignUp = () => {
                             {watchPhotoURL ? (
                               <span>{watchPhotoURL?.name}</span>
                             ) : (
-                              <span>Upload profile pic</span>
+                              <span>Upload Profile Picture</span>
                             )}
                           </label>
 

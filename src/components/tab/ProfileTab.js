@@ -134,9 +134,8 @@ const ProfileTab = () => {
       }
     } catch (error) {
       console.error({ error: error?.message });
-      const errorMessage = error?.message?.split(":")?.at(0);
       notify({
-        message: errorMessage,
+        message: error?.message ?? "Something Went Wrong!",
         type: "error",
       });
     } finally {
@@ -154,8 +153,6 @@ const ProfileTab = () => {
       });
     }
   };
-
-  console.log({ user });
 
   return (
     <>

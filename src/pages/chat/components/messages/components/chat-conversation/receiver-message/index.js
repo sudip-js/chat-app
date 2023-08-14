@@ -8,6 +8,7 @@ import swal from "sweetalert";
 import { useGetChatID } from "../../../../../../../hooks";
 import RenderMessage from "../common/RenderMessage";
 import Avatar from "../../../../../../../resources/images/avatar-profile.png";
+import { notify } from "../../../../../../../helpers";
 
 const ReceiverMessage = (props) => {
   const { created_at, id: messageID, is_edit, selectedUser } = props;
@@ -25,6 +26,10 @@ const ReceiverMessage = (props) => {
       }
     } catch (error) {
       console.error({ error });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
     }
   };
   const handleDeleteMessage = () => {

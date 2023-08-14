@@ -7,6 +7,7 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../../../firebase/firebase";
 import { useState } from "react";
 import Avatar from "../../../../resources/images/avatar-profile.png";
+import { notify } from "../../../../helpers";
 
 const ListItem = ({
   username,
@@ -36,10 +37,18 @@ const ListItem = ({
           }
         } else {
           console.error("Document not found in Firestore.");
+          notify({
+            message: "Document not found in Firestore.",
+            type: "error",
+          });
         }
       },
       (error) => {
         console.error("Error getting real-time updates:", error);
+        notify({
+          message: error?.message ?? "Something Went Wrong!",
+          type: "error",
+        });
       }
     );
 

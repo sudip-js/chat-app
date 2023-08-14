@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useFetchData, useGetChatID } from "../../../../../../hooks";
 import { generateChatId } from "../../../../../../utils";
 import Avatar from "../../../../../../resources/images/avatar-profile.png";
+import { notify } from "../../../../../../helpers";
 
 const AddUser = () => {
   const navigate = useNavigate();
@@ -68,6 +69,10 @@ const AddUser = () => {
         });
         reject(new Error(error?.message));
         console.error({ error: error });
+        notify({
+          message: error?.message ?? "Something Went Wrong!",
+          type: "error",
+        });
       }
     });
   };
@@ -152,6 +157,10 @@ const AddUser = () => {
         });
         reject(new Error(error?.message));
         console.error({ error: error });
+        notify({
+          message: error?.message ?? "Something Went Wrong!",
+          type: "error",
+        });
       }
     });
   };
@@ -162,6 +171,10 @@ const AddUser = () => {
       await handleSetUpChat(participant);
     } catch (error) {
       console.error({ error: error });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
     }
   };
   return (

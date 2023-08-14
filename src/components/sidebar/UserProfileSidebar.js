@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import moment from "moment/moment";
 import Avatar from "../../resources/images/avatar-profile.png";
+import { notify } from "../../helpers";
 
 const UserProfileSidebar = () => {
   const [data, setData] = useState(null);
@@ -23,10 +24,18 @@ const UserProfileSidebar = () => {
           }
         } else {
           console.error("Document not found in Firestore.");
+          notify({
+            message: "Document not found in Firestore.",
+            type: "error",
+          });
         }
       },
       (error) => {
         console.error("Error getting real-time updates:", error);
+        notify({
+          message: error?.message ?? "Something Went Wrong!",
+          type: "error",
+        });
       }
     );
 

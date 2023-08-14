@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { notify } from "../helpers";
 
 export const useAudioRecorder = ({ state, setState, initialState }) => {
   const { mediaStream, mediaRecorder, initRecording, audio } = state;
@@ -11,8 +12,12 @@ export const useAudioRecorder = ({ state, setState, initialState }) => {
         initRecording: true,
         mediaStream: stream,
       }));
-    } catch (err) {
-      console.error({ err });
+    } catch (error) {
+      console.error({ error });
+      notify({
+        message: error?.message ?? "Something Went Wrong!",
+        type: "error",
+      });
     }
   };
 
