@@ -155,6 +155,8 @@ const ProfileTab = () => {
     }
   };
 
+  console.log({ user });
+
   return (
     <>
       <div
@@ -210,10 +212,12 @@ const ProfileTab = () => {
                     </span>
                   </p>
                 )}
-                <p className="mb-0">
+                {/* <p className="mb-0">
                   <OnlineStatus /> Away, notifications snoozed
-                </p>
-
+                </p> */}
+                {/* <p className="mb-0">
+                  <ClockIcon /> 12:41 AM local time
+                </p> */}
                 {user?.away_status && (
                   <p className="mb-0">{user.away_status}</p>
                 )}

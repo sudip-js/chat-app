@@ -77,21 +77,27 @@ const SignUp = () => {
       isLoading: true,
     }));
     try {
+      let url = null;
       const userCredential = await signUpWithEmail(email, password);
       const user = userCredential?.user;
       const { displayName, phoneNumber, photoURL, uid } = user;
       const docRef = doc(db, "users", uid);
-      const storageRef = ref(storage, `profile/${uid}/${photo_url?.name}`);
-      const response = await uploadBytes(storageRef, photo_url, {
-        contentType: photo_url?.type ?? "",
-      });
-      const url = await getDownloadURL(
-        ref(storage, response?.metadata?.fullPath)
-      );
+      if (photo_url) {
+        const storageRef = ref(storage, `profile/${uid}/${photo_url?.name}`);
+        const response = await uploadBytes(storageRef, photo_url, {
+          contentType: photo_url?.type ?? "",
+        });
+        url = await getDownloadURL(ref(storage, response?.metadata?.fullPath));
+      }
+
       await updateProfile(user, {
         displayName: username,
-        photoURL: url,
       });
+      if (photo_url && url) {
+        await updateProfile(user, {
+          photoURL: url,
+        });
+      }
       const payload = {
         username: displayName ?? username,
         email: user?.email,
