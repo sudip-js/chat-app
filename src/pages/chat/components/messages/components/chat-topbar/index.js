@@ -97,11 +97,11 @@ const ChatTopBar = ({ selectedUser = null }) => {
               </div>
             </li> */}
 
-            <li className="list-inline-item d-none d-lg-inline-block me-2 ms-0">
+            {/* <li className="list-inline-item d-none d-lg-inline-block me-2 ms-0">
               <button type="button" className="btn nav-btn user-profile-show">
                 <UserIcon />
               </button>
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>

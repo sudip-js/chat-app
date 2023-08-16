@@ -22,19 +22,15 @@ import { signUpInitialState } from "../../initialState/formInitialState";
 import { notify } from "../../helpers";
 import { Spinner } from "react-bootstrap";
 import { handleLoginWithProvider } from "../../helpers/authHelper";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { db, storage } from "../../firebase/firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { updateProfile } from "firebase/auth";
-import { login } from "../../redux/slices/authSlice";
-import { useDispatch } from "react-redux";
+import { useAuth } from "../../hooks/useAuth";
 
+const initialState = {
+  isLoading: false,
+};
 const SignUp = () => {
-  const dispatch = useDispatch();
+  const { handleAddUser } = useAuth();
   const photoURLRef = useRef(null);
-  const [state, setState] = useState({
-    isLoading: false,
-  });
+  const [state, setState] = useState(initialState);
   const { isLoading } = state;
   const {
     control,
@@ -51,11 +47,14 @@ const SignUp = () => {
   const watchPhotoURL = watch("photo_url");
 
   const handleSocialAuth = async (provider) => {
-    const result = await handleLoginWithProvider(provider);
-    if (!result.response) {
-      console.error({ errors: result?.error });
+    try {
+      const result = await handleLoginWithProvider(provider);
+      handleAddUser({
+        userCredential: result?.response,
+      });
+    } catch (error) {
       notify({
-        message: error?.message ?? "Something Went Wrong!",
+        message: error?.message,
         type: "error",
       });
     }
@@ -77,48 +76,12 @@ const SignUp = () => {
       isLoading: true,
     }));
     try {
-      let url = null;
       const userCredential = await signUpWithEmail(email, password);
-      const user = userCredential?.user;
-      const { displayName, phoneNumber, photoURL, uid } = user;
-      const docRef = doc(db, "users", uid);
-      if (photo_url) {
-        const storageRef = ref(storage, `profile/${uid}/${photo_url?.name}`);
-        const response = await uploadBytes(storageRef, photo_url, {
-          contentType: photo_url?.type ?? "",
-        });
-        url = await getDownloadURL(ref(storage, response?.metadata?.fullPath));
-      }
-
-      await updateProfile(user, {
-        displayName: username,
+      handleAddUser({
+        userCredential,
+        username,
+        photo_url,
       });
-      if (photo_url && url) {
-        await updateProfile(user, {
-          photoURL: url,
-        });
-      }
-      const payload = {
-        username: displayName ?? username,
-        email: user?.email,
-        phone_number: phoneNumber,
-        photo_url: photoURL ?? url,
-        firebase_uid: uid,
-        create_at: serverTimestamp(),
-        follow: false,
-        online: true,
-        updated_at: serverTimestamp(),
-      };
-      await setDoc(docRef, payload);
-      dispatch(
-        login({
-          username: displayName ?? username,
-          email: user?.email,
-          phone_number: phoneNumber,
-          photo_url: photoURL ?? url,
-          firebase_uid: uid,
-        })
-      );
     } catch (error) {
       notify({
         message: error?.message,

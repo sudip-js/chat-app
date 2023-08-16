@@ -73,6 +73,7 @@ const EditProfile = ({
               type="file"
               ref={inputFileRef}
               onChange={onchangeFileInput}
+              accept="image/*"
             />
             <img src={profileImage} alt="Avatar" className="image" />
             {!isLoading && (

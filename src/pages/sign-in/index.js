@@ -20,8 +20,11 @@ import { signInWithEmail } from "../../firebase/authFunctions";
 import { notify } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Spinner } from "react-bootstrap";
+import { useAuth } from "../../hooks/useAuth";
 
 const SignIn = () => {
+  const { handleAddUser } = useAuth();
+
   const [state, setState] = useState({
     isLoading: false,
   });
@@ -35,13 +38,15 @@ const SignIn = () => {
     mode: "all",
     resolver: yupResolver(signInSchema),
   });
-
   const handleSocialAuth = async (provider) => {
-    const result = await handleLoginWithProvider(provider);
-    if (!result.response) {
-      console.error({ errors: result?.error });
+    try {
+      const result = await handleLoginWithProvider(provider);
+      handleAddUser({
+        userCredential: result?.response,
+      });
+    } catch (error) {
       notify({
-        message: result.error ?? "Something Went Wrong!",
+        message: error?.message,
         type: "error",
       });
     }
@@ -53,12 +58,8 @@ const SignIn = () => {
       isLoading: true,
     }));
     try {
-      const response = await signInWithEmail(email, password);
+      await signInWithEmail(email, password);
     } catch (error) {
-      notify({
-        message: error?.message,
-        type: "error",
-      });
       console.error({ error: error?.message });
       notify({
         message: error?.message ?? "Something Went Wrong!",

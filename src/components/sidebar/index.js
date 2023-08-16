@@ -149,7 +149,7 @@ const SidebarMenu = () => {
 
       <div className="flex-lg-column d-none d-lg-block">
         <ul className="nav side-menu-nav justify-content-center">
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <a
               className="nav-link light-dark-mode cursor--pointer"
               data-bs-toggle="tooltip"
@@ -160,7 +160,7 @@ const SidebarMenu = () => {
             >
               <i className="ri-sun-line theme-mode-icon"></i>
             </a>
-          </li>
+          </li> */}
 
           <li className="nav-item btn-group dropup profile-user-dropdown">
             <a
