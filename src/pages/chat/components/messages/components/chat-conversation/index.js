@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import SenderMessage from "./sender-message";
 import ReceiverMessage from "./receiver-message";
 import { collection, onSnapshot, orderBy } from "firebase/firestore";
@@ -10,6 +10,7 @@ import { query } from "firebase/database";
 import { GrowSpinner } from "../../../../../../components";
 
 const ChatConversation = ({ setChatInputState, selectedUser }) => {
+  const chatContainerRef = useRef(null);
   const location = useLocation();
   const user = useSelector(({ auth }) => auth?.user);
   const urlQuery = new URLSearchParams(location?.search);
@@ -41,13 +42,29 @@ const ChatConversation = ({ setChatInputState, selectedUser }) => {
     const unsubscribe = onSnapshot(
       executeQuery,
       (querySnapshot) => {
-        let messages = [];
-        querySnapshot.forEach((doc) => {
-          messages.push(doc.data());
-        });
-        handleState({
-          isLoading: false,
-          data: [...messages],
+        if (!querySnapshot?.empty) {
+          let messages = [];
+          querySnapshot.forEach((doc) => {
+            messages.push(doc.data());
+          });
+          handleState({
+            isLoading: false,
+            data: [...messages],
+          });
+        } else {
+          handleState({
+            isLoading: false,
+            data: [],
+          });
+        }
+        querySnapshot?.docChanges()?.forEach((change) => {
+          if (change?.type === "added") {
+            console.log("added...");
+            chatContainerRef?.current?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
         });
       },
       (error) => {
@@ -95,6 +112,8 @@ const ChatConversation = ({ setChatInputState, selectedUser }) => {
             </a>
           </li>
         )}
+
+        <li ref={chatContainerRef} />
       </ul>
     </div>
   );
