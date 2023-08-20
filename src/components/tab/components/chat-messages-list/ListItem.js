@@ -11,6 +11,7 @@ import { notify } from "../../../../helpers";
 
 const ListItem = ({
   username,
+  email,
   firebase_uid,
   photo_url,
   is_typing,
@@ -77,7 +78,9 @@ const ListItem = ({
           </div>
 
           <div className="flex-grow-1 overflow-hidden">
-            <h5 className="text-truncate font-size-15 mb-1">{username}</h5>
+            <h5 className="text-truncate font-size-15 mb-1">
+              {username || email}
+            </h5>
 
             {is_typing && who_is_typing_id !== user.firebase_uid ? (
               <p className="chat-user-message text-truncate mb-0">

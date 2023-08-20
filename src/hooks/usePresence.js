@@ -45,6 +45,7 @@ export const usePresence = () => {
     try {
       await signOut(auth);
       dispatch(logout());
+      console.log("here");
       updateUserInFirebase(user, false);
       setUser(null);
       localStorage.clear();

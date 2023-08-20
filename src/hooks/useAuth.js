@@ -7,10 +7,12 @@ import { login } from "../redux/slices/authSlice";
 export const useAuth = () => {
   const dispatch = useDispatch();
   const handleAddUser = async ({ userCredential = null, username = null }) => {
+    console.log({ userCredential, username });
     try {
       const user = userCredential?.user;
-      const { displayName, phoneNumber, photoURL, uid } = user;
+      const { displayName, phoneNumber, photoURL, uid, email } = user;
       const docRef = doc(db, "users", uid);
+      const tempUserName = displayName || username || email;
 
       if (username) {
         await updateProfile(user, {
@@ -19,8 +21,8 @@ export const useAuth = () => {
       }
 
       const payload = {
-        username: displayName ?? username,
-        email: user?.email,
+        username: tempUserName,
+        email,
         phone_number: phoneNumber,
         photo_url: photoURL ?? null,
         firebase_uid: uid,

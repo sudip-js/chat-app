@@ -16,6 +16,7 @@ const AddUser = () => {
   const { isLoading, data } = useFetchData({
     collectionRef: "users",
   });
+  console.log({ data });
   const [addUserState, setAddUserState] = useState({
     isLoading: null,
   });
@@ -185,6 +186,7 @@ const AddUser = () => {
         ) : data?.length ? (
           data.map((user) => {
             const { firebase_uid, username, photo_url, online } = user;
+            console.log({ photo_url });
             return (
               <li key={firebase_uid}>
                 <a>
