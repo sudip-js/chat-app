@@ -12,11 +12,14 @@ import {
   where,
 } from "firebase/firestore";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { onDisconnect, onValue, ref, set } from "firebase/database";
+import { onValue, ref, set } from "firebase/database";
 import { Navigate } from "react-router-dom";
 import { notify } from "../helpers";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/slices/authSlice";
 
 export const usePresence = () => {
+  const dispatch = useDispatch();
   const [user, setUser] = useState(null);
   const [userLoading, setUserLoading] = useState(true);
   const updateUserInFirebase = (user, status) => {
@@ -41,6 +44,7 @@ export const usePresence = () => {
   const logOut = async () => {
     try {
       await signOut(auth);
+      dispatch(logout());
       updateUserInFirebase(user, false);
       setUser(null);
       localStorage.clear();

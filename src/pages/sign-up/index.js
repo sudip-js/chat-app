@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   AuthFormFooter,
   AuthFormHeader,
@@ -11,7 +11,6 @@ import {
   GithubIcon,
   GoogleIcon,
   PasswordIcon,
-  ProfileIcon,
   UserIcon,
 } from "../../resources/icons";
 import { signUpWithEmail } from "../../firebase/authFunctions";
@@ -29,22 +28,17 @@ const initialState = {
 };
 const SignUp = () => {
   const { handleAddUser } = useAuth();
-  const photoURLRef = useRef(null);
   const [state, setState] = useState(initialState);
   const { isLoading } = state;
   const {
     control,
     handleSubmit,
     formState: { errors },
-    setValue,
-    watch,
   } = useForm({
     defaultValues: signUpInitialState,
     mode: "all",
     resolver: yupResolver(signUpSchema),
   });
-
-  const watchPhotoURL = watch("photo_url");
 
   const handleSocialAuth = async (provider) => {
     try {
@@ -60,17 +54,7 @@ const SignUp = () => {
     }
   };
 
-  const handleChangePhotoURL = (e) => {
-    const photo_url = e.target.files[0];
-    setValue("photo_url", photo_url);
-  };
-
-  const handleSignUpWithEmail = async ({
-    username,
-    email,
-    password,
-    photo_url,
-  }) => {
+  const handleSignUpWithEmail = async ({ username, email, password }) => {
     setState((prevState) => ({
       ...prevState,
       isLoading: true,
@@ -80,7 +64,6 @@ const SignUp = () => {
       handleAddUser({
         userCredential,
         username,
-        photo_url,
       });
     } catch (error) {
       notify({
@@ -187,30 +170,6 @@ const SignUp = () => {
                           />
                         )}
                       />
-
-                      <div className="mt-3">
-                        <div className="input-group">
-                          <label
-                            htmlFor="photo_url"
-                            className="d-flex align-items-center gap-2 cursor--pointer"
-                          >
-                            <ProfileIcon />
-                            {watchPhotoURL ? (
-                              <span>{watchPhotoURL?.name}</span>
-                            ) : (
-                              <span>Upload Profile Picture</span>
-                            )}
-                          </label>
-
-                          <input
-                            ref={photoURLRef}
-                            onChange={handleChangePhotoURL}
-                            id="photo_url"
-                            type="file"
-                            hidden
-                          />
-                        </div>
-                      </div>
                     </div>
                     <div className="d-grid">
                       <SubmitButton disabled={isLoading} type="submit">

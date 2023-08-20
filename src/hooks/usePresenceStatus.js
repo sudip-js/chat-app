@@ -21,11 +21,7 @@ export const usePresenceStatus = ({ userID }) => {
             });
           }
         } else {
-          console.error("Document not found in Firestore.");
-          notify({
-            message: "Document not found in Firestore.",
-            type: "error",
-          });
+          console.error("Users not found");
         }
       },
       (error) => {
