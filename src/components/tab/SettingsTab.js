@@ -172,7 +172,7 @@ const SettingsTab = () => {
                             type="checkbox"
                             className="form-check-input"
                             id="privacy-lastseenSwitch"
-                            checked
+                            defaultChecked={true}
                           />
                           <label
                             className="form-check-label"
@@ -228,7 +228,7 @@ const SettingsTab = () => {
                             type="checkbox"
                             className="form-check-input"
                             id="privacy-readreceiptSwitch"
-                            checked
+                            defaultChecked={true}
                           />
                           <label
                             className="form-check-label"
@@ -307,6 +307,7 @@ const SettingsTab = () => {
                           type="checkbox"
                           className="form-check-input"
                           id="security-notificationswitch"
+                          defaultChecked={true}
                         />
                         <label
                           className="form-check-label"
