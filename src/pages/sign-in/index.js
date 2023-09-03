@@ -41,7 +41,6 @@ const SignIn = () => {
   const handleSocialAuth = async (provider) => {
     try {
       const result = await handleLoginWithProvider(provider);
-      console.log({ result });
       if (result?.response) {
         handleAddUser({
           userCredential: result?.response,

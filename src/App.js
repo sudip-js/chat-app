@@ -9,17 +9,13 @@ import { login, logout } from "./redux/slices/authSlice";
 import "./App.css";
 import { doc, onSnapshot } from "firebase/firestore";
 import moment from "moment";
-import { usePresence } from "./hooks";
 import { notify } from "./helpers";
 
 const App = () => {
   const dispatch = useDispatch();
-  const { userLoading } = usePresence();
   const user = useSelector(({ auth }) => auth?.user);
-  console.log({ user });
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log({ user });
       if (user) {
         const { displayName, email, phoneNumber, photoURL, uid } = user;
         dispatch(
@@ -44,8 +40,6 @@ const App = () => {
   useEffect(() => {
     let unsubscribe = null;
     let formattedDate = null;
-
-    console.log({ user });
 
     if (user) {
       const docRef = doc(db, `users/${user?.firebase_uid}`);

@@ -7,7 +7,6 @@ import { login } from "../redux/slices/authSlice";
 export const useAuth = () => {
   const dispatch = useDispatch();
   const handleAddUser = async ({ userCredential = null, username = null }) => {
-    console.log({ userCredential, username });
     try {
       const user = userCredential?.user ?? {};
       const {

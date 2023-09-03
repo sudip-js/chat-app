@@ -19,7 +19,6 @@ const ChatMessagesList = ({ handleOpenModal = () => null }) => {
   const { user } = useGetChatID();
   const [state, setState] = useState(initialState);
   const { isLoading, data } = state;
-  console.log({ data });
 
   const handleState = (newState) => {
     setState((prevState) => ({
@@ -41,7 +40,6 @@ const ChatMessagesList = ({ handleOpenModal = () => null }) => {
           let chats = [];
           let typingStatus = [];
           querySnapshot.forEach((doc) => {
-            console.log({ doc: doc.data() });
             chats.push(doc.data());
             typingStatus.push({
               isTyping: doc?.data()?.is_typing,

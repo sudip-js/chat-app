@@ -59,7 +59,6 @@ const ChatConversation = ({ setChatInputState, selectedUser }) => {
         }
         querySnapshot?.docChanges()?.forEach((change) => {
           if (change?.type === "added") {
-            console.log("added...");
             chatContainerRef?.current?.scrollIntoView({
               behavior: "smooth",
               block: "start",
